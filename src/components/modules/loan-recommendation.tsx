@@ -114,8 +114,8 @@ export function LoanRecommendation() {
                   <div className="p-2 rounded-lg bg-muted/30">
                     <div className="text-[10px] text-muted-foreground uppercase">Status</div>
                     {r.eligible
-                      ? <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" />Eligible</span>
-                      : <span className="text-xs font-semibold text-amber-400 flex items-center gap-1"><XCircle className="h-3 w-3" />Conditional</span>}
+                      ? <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" />Eligible</span>
+                      : <span className="text-xs font-semibold text-amber-600 flex items-center gap-1"><XCircle className="h-3 w-3" />Conditional</span>}
                   </div>
                 </div>
 

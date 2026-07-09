@@ -43,7 +43,7 @@ export function StatCard({
       </div>
       <div className="text-2xl font-bold tracking-tight">{value}</div>
       {change && (
-        <div className={cn("flex items-center gap-1 text-[11px] mt-1.5", change.positive ? "text-emerald-400" : "text-red-400")}>
+        <div className={cn("flex items-center gap-1 text-[11px] mt-1.5 font-medium", change.positive ? "text-emerald-600" : "text-red-600")}>
           {change.positive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
           <span>{change.value}</span>
         </div>
@@ -67,17 +67,17 @@ export function SectionTitle({ children, action }: { children: ReactNode; action
 
 export function BandBadge({ band }: { band: string }) {
   const map: Record<string, string> = {
-    Excellent: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    Good: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-    Fair: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    Poor: "bg-red-500/15 text-red-300 border-red-500/30",
-    Low: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    Moderate: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-    High: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    Critical: "bg-red-500/15 text-red-300 border-red-500/30",
-    Approve: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    Review: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    Decline: "bg-red-500/15 text-red-300 border-red-500/30",
+    Excellent: "bg-emerald-100 text-emerald-700 border-emerald-300",
+    Good: "bg-teal-100 text-teal-700 border-teal-300",
+    Fair: "bg-amber-100 text-amber-700 border-amber-300",
+    Poor: "bg-red-100 text-red-700 border-red-300",
+    Low: "bg-emerald-100 text-emerald-700 border-emerald-300",
+    Moderate: "bg-teal-100 text-teal-700 border-teal-300",
+    High: "bg-amber-100 text-amber-700 border-amber-300",
+    Critical: "bg-red-100 text-red-700 border-red-300",
+    Approve: "bg-emerald-100 text-emerald-700 border-emerald-300",
+    Review: "bg-amber-100 text-amber-700 border-amber-300",
+    Decline: "bg-red-100 text-red-700 border-red-300",
   };
   const cls = map[band] ?? "bg-muted text-muted-foreground border-border";
   return <span className={cn("text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md border", cls)}>{band}</span>;
@@ -85,9 +85,9 @@ export function BandBadge({ band }: { band: string }) {
 
 export function PriorityBadge({ p }: { p: "P0" | "P1" | "P2" | "P3" }) {
   const map: Record<string, string> = {
-    P0: "bg-red-500/20 text-red-300 border-red-500/40",
-    P1: "bg-orange-500/20 text-orange-300 border-orange-500/40",
-    P2: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+    P0: "bg-red-100 text-red-700 border-red-300",
+    P1: "bg-orange-100 text-orange-700 border-orange-300",
+    P2: "bg-teal-100 text-teal-700 border-teal-300",
     P3: "bg-muted text-muted-foreground border-border",
   };
   return <span className={cn("text-[10px] font-bold px-1.5 py-0.5 rounded border", map[p])}>{p}</span>;

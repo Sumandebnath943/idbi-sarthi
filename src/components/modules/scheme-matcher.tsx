@@ -77,7 +77,7 @@ export function SchemeMatcher() {
                     <div className="flex items-start gap-3">
                       <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center",
                         isHighMatch ? "bg-emerald-500/20" : "bg-primary/15")}>
-                        <Building2 className={cn("h-5 w-5", isHighMatch ? "text-emerald-400" : "text-primary")} />
+                        <Building2 className={cn("h-5 w-5", isHighMatch ? "text-emerald-600" : "text-primary")} />
                       </div>
                       <div>
                         <h3 className="text-sm font-semibold leading-tight">{m.scheme.name}</h3>
@@ -86,7 +86,7 @@ export function SchemeMatcher() {
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className={cn("text-2xl font-bold", isHighMatch ? "text-emerald-400" : "text-primary")}>{m.matchScore}%</div>
+                      <div className={cn("text-2xl font-bold", isHighMatch ? "text-emerald-600" : "text-primary")}>{m.matchScore}%</div>
                       <div className="text-[9px] text-muted-foreground">match</div>
                     </div>
                   </div>
@@ -106,13 +106,13 @@ export function SchemeMatcher() {
                   <div className="space-y-1.5">
                     {m.matchedCriteria.map((c, j) => (
                       <div key={`m-${j}`} className="flex items-start gap-2 text-[11px]">
-                        <CheckCircle2 className="h-3 w-3 text-emerald-400 mt-0.5 shrink-0" />
+                        <CheckCircle2 className="h-3 w-3 text-emerald-600 mt-0.5 shrink-0" />
                         <span>{c}</span>
                       </div>
                     ))}
                     {m.missingCriteria.map((c, j) => (
                       <div key={`x-${j}`} className="flex items-start gap-2 text-[11px] text-muted-foreground">
-                        <XCircle className="h-3 w-3 text-amber-400 mt-0.5 shrink-0" />
+                        <XCircle className="h-3 w-3 text-amber-600 mt-0.5 shrink-0" />
                         <span>{c}</span>
                       </div>
                     ))}

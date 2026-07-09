@@ -106,3 +106,50 @@ Stage Summary:
 - Groq API integrated; just needs GROQ_API_KEY in .env.local to activate
 - All 24 customers now have unique account dates, transaction descriptions, employer names, merchant names, email domains, phone numbers — no more shared boilerplate data
 - Ready for user to add Groq key
+
+---
+Task ID: 4 (Apply IDBI screenshot color profile - light theme)
+Agent: Main (super-z)
+Task: Switch from dark theme to IDBI's actual light theme palette extracted from user-uploaded screenshot of IDBI Internet Banking page
+
+Work Log:
+- Used VLM (z-ai vision) to analyze the user-uploaded screenshot of IDBI Bank's Internet Banking page
+- Extracted actual IDBI brand palette:
+  * Primary teal: #00674D (deep brand teal — header, nav, primary buttons) ~40%
+  * White: #FFFFFF (main background, text on dark) ~30%
+  * Orange accent: #FF7A00 (CTAs, highlights, sidebar accents) ~15%
+  * Light mint: #E6F7F0 (gradient fill, soft backgrounds) ~10%
+  * Light gray: #F5F5F5 (secondary background) ~5%
+- Rewrote globals.css with light theme as the default (no more dark theme):
+  * --background: #F5F5F5 (off-white)
+  * --foreground: #0F2A22 (very dark teal-tinted text)
+  * --card: #FFFFFF (pure white cards)
+  * --primary: #00674D (IDBI teal)
+  * --accent: #FF7A00 (IDBI orange)
+  * --secondary: #E6F7F0 (IDBI mint)
+  * Body backdrop: subtle teal + orange radial gradients on light
+  * Updated .glass and .glass-strong to white cards with teal-tinted shadows
+  * Gradient text now teal → orange (lighter shades)
+  * Scrollbar: teal-tinted
+- Removed className="dark" from <html> in layout.tsx
+- Switched Sonner toaster theme from "dark" to "light"
+- Updated BandBadge & PriorityBadge in primitives.tsx: replaced dark-theme colors (bg-X-500/15 text-X-300) with light-theme equivalents (bg-X-100 text-X-700) for proper contrast on white
+- Bulk-replaced across all 12 module files + shell files:
+  * text-{emerald,red,cyan,amber,orange}-400 → text-{...}-600 (better contrast on white)
+  * text-{emerald,red,cyan,amber,orange}-300 → text-{...}-700
+  * Chart grid strokes: rgba(255,255,255,0.05/0.1/0.2) → rgba(0,103,77,0.08/0.12/0.25)
+  * Chart axis tick fill: #94a3b8 / #64748b → #5A6B65 (matches --muted-foreground)
+  * Tooltip background: rgba(20,20,30,0.95) → rgba(255,255,255,0.98)
+  * Tooltip border: rgba(255,255,255,0.1) → rgba(0,103,77,0.15)
+- Cleared turbopack cache and restarted dev server to ensure CSS changes took effect (initial reload showed stale dark theme due to cache)
+- Verified via VLM (z-ai vision):
+  * Dashboard: "background color is light (off-white), primary button/header color is teal" ✓
+  * Customer dashboard: "light, neutral color scheme with teal accents and white cards... text is highly readable... aligns with IDBI Bank's brand: teal (primary) and white dominate, with subtle orange for emphasis" ✓
+  * Analytics dashboard: "light background with charts (pie, bar, line) that are readable, using distinct colors (teal, blue, yellow, green) for bars/lines... looks professional" ✓
+- Lint: 0 errors, 0 warnings
+
+Stage Summary:
+- App now uses IDBI's actual brand palette extracted from their Internet Banking screenshot
+- Light theme throughout (white cards, off-white background, teal primary, orange accent)
+- All chart colors, badges, tooltips, and component styling adjusted for proper contrast on light background
+- Screenshots saved to /home/z/my-project/download/ for reference

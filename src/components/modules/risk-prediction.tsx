@@ -96,14 +96,14 @@ export function RiskPrediction() {
             <SectionTitle>Risk Drivers (Impact Attribution)</SectionTitle>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.drivers.map(d => ({ ...d, absImpact: Math.abs(d.impact * 100) }))} layout="vertical" margin={{ left: 20, right: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis type="number" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" tickFormatter={(v) => `${v}%`} />
-                <YAxis type="category" dataKey="label" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" width={150} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,103,77,0.08)" />
+                <XAxis type="number" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" tickFormatter={(v) => `${v}%`} />
+                <YAxis type="category" dataKey="label" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" width={150} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }}
+                  contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }}
                   formatter={(v: number, _n: string, p: { payload: Driver }) => [`${(p.payload.impact * 100).toFixed(1)}% impact`, p.payload.label]}
                 />
-                <ReferenceLine x={0} stroke="rgba(255,255,255,0.2)" />
+                <ReferenceLine x={0} stroke="rgba(0,103,77,0.25)" />
                 <Bar dataKey="absImpact" radius={[0, 4, 4, 0]}>
                   {data.drivers.map((d, i) => <Cell key={i} fill={d.impact > 0 ? "#f87171" : "#34d399"} />)}
                 </Bar>

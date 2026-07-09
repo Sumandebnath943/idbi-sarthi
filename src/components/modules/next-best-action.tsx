@@ -114,7 +114,7 @@ export function NextBestAction() {
                   <div className="flex items-center gap-2">
                     <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center",
                       isUrgent ? "bg-red-500/20" : "bg-primary/15")}>
-                      <Icon className={cn("h-4 w-4", isUrgent ? "text-red-400" : "text-primary")} />
+                      <Icon className={cn("h-4 w-4", isUrgent ? "text-red-600" : "text-primary")} />
                     </div>
                     <div>
                       <div className="text-sm font-semibold">{a.customerName}</div>
@@ -136,7 +136,7 @@ export function NextBestAction() {
                       <Calendar className="h-3 w-3" /> {a.deadline}
                     </span>
                   </div>
-                  <Badge variant="outline" className="text-[9px] text-emerald-400 border-emerald-500/30 bg-emerald-500/5">
+                  <Badge variant="outline" className="text-[9px] text-emerald-600 border-emerald-500/30 bg-emerald-500/5">
                     <TrendingUp className="h-2.5 w-2.5 mr-1" />{a.expectedUplift}
                   </Badge>
                 </div>

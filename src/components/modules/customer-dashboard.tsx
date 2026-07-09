@@ -129,7 +129,7 @@ export function CustomerDashboard() {
                         <div className="font-medium">{t.description}</div>
                         <div className="text-[10px] text-muted-foreground">{t.category}</div>
                       </TableCell>
-                      <TableCell className={`text-right text-xs py-2 font-mono ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      <TableCell className={`text-right text-xs py-2 font-mono ${t.amount >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                         {t.amount >= 0 ? "+" : ""}INR {Math.abs(t.amount).toLocaleString("en-IN")}
                       </TableCell>
                     </TableRow>
@@ -141,14 +141,14 @@ export function CustomerDashboard() {
 
           {/* Risk signals */}
           <GlassCard className="p-5">
-            <SectionTitle action={<AlertTriangle className="h-3.5 w-3.5 text-amber-400" />}>Risk Signals</SectionTitle>
+            <SectionTitle action={<AlertTriangle className="h-3.5 w-3.5 text-amber-600" />}>Risk Signals</SectionTitle>
             {customer.riskFactors.length === 0 ? (
-              <div className="text-sm text-emerald-400">No active risk signals — healthy profile</div>
+              <div className="text-sm text-emerald-600">No active risk signals — healthy profile</div>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {customer.riskFactors.map((rf, i) => (
                   <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30">
-                    <AlertTriangle className="h-3 w-3 text-amber-400" />
+                    <AlertTriangle className="h-3 w-3 text-amber-600" />
                     <span className="text-xs">{rf.label}</span>
                     <Badge variant="outline" className="text-[9px]">{(rf.weight*100).toFixed(0)}% weight</Badge>
                   </div>

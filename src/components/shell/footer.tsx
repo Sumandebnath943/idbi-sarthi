@@ -16,7 +16,7 @@ export function Footer() {
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
-            <Shield className="h-3 w-3 text-emerald-400" />
+            <Shield className="h-3 w-3 text-emerald-600" />
             <span>DPDP Compliant</span>
           </div>
           <div className="flex items-center gap-1.5">

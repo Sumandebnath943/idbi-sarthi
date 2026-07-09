@@ -79,9 +79,9 @@ const SEVERITY_ICON = {
   error: XCircle,
 };
 const SEVERITY_COLOR = {
-  info: "text-cyan-400 bg-cyan-500/10 border-cyan-500/30",
-  warning: "text-amber-400 bg-amber-500/10 border-amber-500/30",
-  error: "text-red-400 bg-red-500/10 border-red-500/30",
+  info: "text-cyan-600 bg-cyan-500/10 border-cyan-500/30",
+  warning: "text-amber-600 bg-amber-500/10 border-amber-500/30",
+  error: "text-red-600 bg-red-500/10 border-red-500/30",
 };
 
 export function DocumentIntelligence() {
@@ -225,7 +225,7 @@ export function DocumentIntelligence() {
               <GlassCard className="p-4">
                 <SectionTitle action={<Database className="h-3.5 w-3.5 text-primary" />}>Compliance Flags</SectionTitle>
                 {result.flags.length === 0 ? (
-                  <div className="text-xs text-emerald-400 flex items-center gap-1.5">
+                  <div className="text-xs text-emerald-600 flex items-center gap-1.5">
                     <CheckCircle2 className="h-3 w-3" /> No compliance issues detected
                   </div>
                 ) : (

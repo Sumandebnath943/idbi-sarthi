@@ -26,13 +26,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
         <Toaster />
-        <SonnerToaster position="top-right" theme="dark" />
+        <SonnerToaster position="top-right" theme="light" />
       </body>
     </html>
   );

@@ -118,7 +118,7 @@ export function LeadQualification() {
                         </div>
                         <div className="text-[10px] text-muted-foreground mb-1">{l.product}</div>
                         <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-emerald-400">INR {(l.estimatedValue/100000).toFixed(1)}L</span>
+                          <span className="text-emerald-600">INR {(l.estimatedValue/100000).toFixed(1)}L</span>
                           <span className="font-mono font-semibold text-primary">{l.score}</span>
                         </div>
                       </div>
@@ -191,7 +191,7 @@ export function LeadQualification() {
                 <div className="flex items-center gap-4">
                   <div className="relative h-24 w-24 flex items-center justify-center">
                     <svg className="absolute inset-0" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,103,77,0.08)" strokeWidth="8" />
                       <circle cx="50" cy="50" r="42" fill="none" stroke="#22d3ee" strokeWidth="8" strokeLinecap="round"
                         strokeDasharray={`${(result.score / 100) * 264} 264`} transform="rotate(-90 50 50)" />
                     </svg>

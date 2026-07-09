@@ -65,7 +65,7 @@ export function HealthScore() {
             <GlassCard className="lg:col-span-1 p-6 flex flex-col items-center justify-center text-center">
               <div className="relative h-44 w-44 flex items-center justify-center">
                 <svg className="absolute inset-0" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0,103,77,0.08)" strokeWidth="8" />
                   <circle
                     cx="50" cy="50" r="42" fill="none"
                     stroke={BAND_COLOR[data.band]} strokeWidth="8"
@@ -96,9 +96,9 @@ export function HealthScore() {
               <SectionTitle>Factor Breakdown (Radar)</SectionTitle>
               <ResponsiveContainer width="100%" height={280}>
                 <RadarChart data={data.factors.map(f => ({ factor: f.label, score: Math.round(f.raw * 100) }))}>
-                  <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                  <PolarAngleAxis dataKey="factor" tick={{ fill: "#94a3b8", fontSize: 10 }} />
-                  <PolarRadiusAxis domain={[0, 100]} tick={{ fill: "#64748b", fontSize: 9 }} stroke="rgba(255,255,255,0.1)" />
+                  <PolarGrid stroke="rgba(0,103,77,0.12)" />
+                  <PolarAngleAxis dataKey="factor" tick={{ fill: "#5A6B65", fontSize: 10 }} />
+                  <PolarRadiusAxis domain={[0, 100]} tick={{ fill: "#5A6B65", fontSize: 9 }} stroke="rgba(0,103,77,0.12)" />
                   <Radar dataKey="score" stroke="#22d3ee" fill="#22d3ee" fillOpacity={0.4} />
                   <Legend wrapperStyle={{ fontSize: 10 }} />
                 </RadarChart>

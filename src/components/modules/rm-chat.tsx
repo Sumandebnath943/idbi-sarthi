@@ -121,14 +121,14 @@ export function RmChat() {
                     {m.role === "user"
                       ? <User className="h-4 w-4 text-primary" />
                       : m.fallback
-                        ? <Bot className="h-4 w-4 text-amber-400" />
+                        ? <Bot className="h-4 w-4 text-amber-600" />
                         : <Bot className="h-4 w-4 text-primary" />}
                   </div>
                   <div className={cn("max-w-[80%] p-3 rounded-xl text-xs leading-relaxed whitespace-pre-wrap",
                     m.role === "user" ? "bg-primary/15 text-foreground" : m.fallback ? "bg-amber-500/10 border border-amber-500/30" : "bg-muted/30 border border-border/40"
                   )}>
                     {m.fallback && (
-                      <div className="text-[9px] uppercase tracking-wider text-amber-400 mb-1.5">Fallback response (LLM unavailable)</div>
+                      <div className="text-[9px] uppercase tracking-wider text-amber-600 mb-1.5">Fallback response (LLM unavailable)</div>
                     )}
                     {m.content}
                   </div>

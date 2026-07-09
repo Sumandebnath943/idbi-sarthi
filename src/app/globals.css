@@ -43,59 +43,65 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ===== IDBI Brand Theme — Teal + Saffron ===== */
-/* IDBI Bank brand colors:
-   - Primary teal:    #00836C (Observatory) — IDBI's iconic logo color
-   - Saffron accent:  #F58220 (Orange Passion) — IDBI's accent color
-   - Deep navy base for trust & stability
+/* ===== IDBI Brand Theme — Light, extracted from IDBI Internet Banking screenshot ===== */
+/* Source: IDBI Bank Internet Banking page
+   - Primary teal:    #00674D (deep brand teal — header, nav, primary buttons)
+   - Orange accent:   #FF7A00 (CTAs, highlights, sidebar accents)
+   - Light mint:      #E6F7F0 (gradient fill, soft backgrounds)
+   - Off-white:       #F5F5F5 (secondary background)
+   - Pure white:      #FFFFFF (main background, text on dark)
 */
 :root {
   --radius: 0.75rem;
 
-  /* IDBI brand tokens */
-  --idbi-teal: #00836C;
-  --idbi-teal-light: #00A88A;
-  --idbi-teal-dark: #00614F;
-  --idbi-saffron: #F58220;
-  --idbi-saffron-light: #FF9F4A;
+  /* IDBI brand tokens (raw) */
+  --idbi-teal: #00674D;
+  --idbi-teal-light: #008A66;
+  --idbi-teal-dark: #004D38;
+  --idbi-orange: #FF7A00;
+  --idbi-orange-light: #FF9540;
+  --idbi-orange-dark: #CC6200;
+  --idbi-mint: #E6F7F0;
+  --idbi-mint-dark: #C8EAD9;
+  --idbi-offwhite: #F5F5F5;
   --idbi-navy: #0A2540;
 
-  /* Dark theme (default, locked) */
-  --background: oklch(0.16 0.025 200);
-  --foreground: oklch(0.96 0.012 200);
-  --card: oklch(0.21 0.030 200 / 70%);
-  --card-foreground: oklch(0.96 0.012 200);
-  --popover: oklch(0.18 0.025 200);
-  --popover-foreground: oklch(0.96 0.012 200);
+  /* ===== Light theme tokens (default, locked) ===== */
+  --background: #F5F5F5;
+  --foreground: #0F2A22;  /* very dark teal-tinted text */
+  --card: #FFFFFF;
+  --card-foreground: #0F2A22;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F2A22;
   /* Primary = IDBI teal */
-  --primary: oklch(0.62 0.13 178);          /* #00836C approx */
-  --primary-foreground: oklch(0.98 0.01 200);
-  --secondary: oklch(0.27 0.035 200);
-  --secondary-foreground: oklch(0.96 0.012 200);
-  --muted: oklch(0.25 0.025 200 / 60%);
-  --muted-foreground: oklch(0.70 0.030 200);
-  /* Accent = IDBI saffron */
-  --accent: oklch(0.72 0.16 60);            /* #F58220 approx */
-  --accent-foreground: oklch(0.12 0.02 60);
-  --destructive: oklch(0.65 0.22 25);
-  --destructive-foreground: oklch(0.98 0.01 200);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.62 0.13 178 / 60%);
-  /* Chart palette - IDBI teal family + saffron + complementary */
-  --chart-1: oklch(0.62 0.13 178);  /* IDBI teal */
-  --chart-2: oklch(0.72 0.16 60);   /* IDBI saffron */
-  --chart-3: oklch(0.55 0.10 200);  /* deep teal */
-  --chart-4: oklch(0.78 0.14 90);   /* warm gold */
-  --chart-5: oklch(0.55 0.18 320);  /* magenta accent */
-  --sidebar: oklch(0.13 0.025 200 / 85%);
-  --sidebar-foreground: oklch(0.96 0.012 200);
-  --sidebar-primary: oklch(0.62 0.13 178);
-  --sidebar-primary-foreground: oklch(0.98 0.01 200);
-  --sidebar-accent: oklch(0.27 0.035 200);
-  --sidebar-accent-foreground: oklch(0.96 0.012 200);
-  --sidebar-border: oklch(1 0 0 / 6%);
-  --sidebar-ring: oklch(0.62 0.13 178 / 60%);
+  --primary: #00674D;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E6F7F0;
+  --secondary-foreground: #00674D;
+  --muted: #F0F4F2;
+  --muted-foreground: #5A6B65;
+  /* Accent = IDBI orange */
+  --accent: #FF7A00;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #D9E5E0;
+  --input: #FFFFFF;
+  --ring: #00674D;
+  /* Chart palette - IDBI teal family + orange + complementary */
+  --chart-1: #00674D;  /* IDBI teal */
+  --chart-2: #FF7A00;  /* IDBI orange */
+  --chart-3: #008A66;  /* lighter teal */
+  --chart-4: #E6F7F0;  /* mint */
+  --chart-5: #6B4FBB;  /* complementary violet */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0F2A22;
+  --sidebar-primary: #00674D;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E6F7F0;
+  --sidebar-accent-foreground: #00674D;
+  --sidebar-border: #D9E5E0;
+  --sidebar-ring: #00674D;
 }
 
 @layer base {
@@ -107,64 +113,67 @@
     min-height: 100%;
   }
   body {
-    /* IDBI-branded gradient backdrop: teal + saffron glows */
+    /* IDBI-branded subtle backdrop: mint + soft orange glow */
     background-image:
-      radial-gradient(1200px 600px at 10% -10%, oklch(0.62 0.13 178 / 20%), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, oklch(0.72 0.16 60 / 14%), transparent 60%),
-      radial-gradient(800px 600px at 50% 110%, oklch(0.55 0.10 200 / 12%), transparent 60%);
+      radial-gradient(1200px 600px at 10% -10%, rgba(0, 103, 77, 0.06), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(255, 122, 0, 0.05), transparent 60%),
+      radial-gradient(800px 600px at 50% 110%, rgba(0, 103, 77, 0.04), transparent 60%);
     background-attachment: fixed;
   }
 }
 
 /* ===== Custom utilities ===== */
+/* Light card with subtle teal-tinted shadow */
 .glass {
-  background: var(--card);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: #FFFFFF;
   border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 103, 77, 0.04), 0 4px 16px -8px rgba(0, 103, 77, 0.08);
 }
 .glass-strong {
-  background: oklch(0.20 0.030 200 / 90%);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: #FFFFFF;
   border: 1px solid var(--border);
+  box-shadow: 0 4px 24px -8px rgba(0, 103, 77, 0.18), 0 2px 6px rgba(0, 103, 77, 0.06);
 }
 /* Teal glow (primary) */
 .glow-accent {
-  box-shadow: 0 0 0 1px oklch(0.62 0.13 178 / 25%), 0 8px 32px -8px oklch(0.62 0.13 178 / 40%);
+  box-shadow: 0 0 0 1px rgba(0, 103, 77, 0.25), 0 8px 32px -8px rgba(0, 103, 77, 0.35);
 }
-/* Saffron glow (accent / urgent) */
+/* Orange glow (accent / urgent) */
 .glow-saffron {
-  box-shadow: 0 0 0 1px oklch(0.72 0.16 60 / 30%), 0 8px 32px -8px oklch(0.72 0.16 60 / 45%);
+  box-shadow: 0 0 0 1px rgba(255, 122, 0, 0.30), 0 8px 32px -8px rgba(255, 122, 0, 0.45);
 }
 .text-glow {
-  text-shadow: 0 0 14px oklch(0.62 0.13 178 / 50%);
+  text-shadow: 0 0 14px rgba(0, 103, 77, 0.30);
 }
-/* Gradient text: teal → saffron (IDBI brand) */
+/* Gradient text: teal → orange (IDBI brand) */
 .gradient-text {
-  background: linear-gradient(135deg, #00A88A 0%, #00836C 40%, #F58220 100%);
+  background: linear-gradient(135deg, #008A66 0%, #00674D 40%, #FF7A00 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-/* Saffron gradient for highlights */
+/* Orange gradient for highlights */
 .gradient-saffron {
-  background: linear-gradient(135deg, #F58220 0%, #FF9F4A 100%);
+  background: linear-gradient(135deg, #FF7A00 0%, #FF9540 100%);
+}
+/* Teal gradient for primary surfaces */
+.gradient-teal {
+  background: linear-gradient(135deg, #00674D 0%, #008A66 100%);
 }
 
 /* Custom scrollbar — teal */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.62 0.13 178 / 25%);
+  background: rgba(0, 103, 77, 0.25);
   border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.62 0.13 178 / 45%); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 103, 77, 0.45); }
 
 /* Grid pattern background helper */
 .grid-bg {
   background-image:
-    linear-gradient(oklch(1 0 0 / 3%) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(1 0 0 / 3%) 1px, transparent 1px);
+    linear-gradient(rgba(0, 103, 77, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 103, 77, 0.04) 1px, transparent 1px);
   background-size: 40px 40px;
 }

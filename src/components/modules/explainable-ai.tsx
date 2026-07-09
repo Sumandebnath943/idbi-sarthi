@@ -136,17 +136,17 @@ export function ExplainableAI() {
             <SectionTitle>Feature Attribution Waterfall</SectionTitle>
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={data.features.map(f => ({ ...f, absVal: Math.abs(f.contribution * 100) }))} layout="vertical" margin={{ left: 20, right: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis type="number" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" tickFormatter={(v) => `${v}%`} />
-                <YAxis type="category" dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" width={130} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,103,77,0.08)" />
+                <XAxis type="number" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" tickFormatter={(v) => `${v}%`} />
+                <YAxis type="category" dataKey="name" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" width={130} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }}
+                  contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }}
                   formatter={(v: number, _n: string, p: { payload: Feature }) => [
                     `${p.payload.contribution > 0 ? "+" : ""}${(p.payload.contribution * 100).toFixed(1)}% (${p.payload.value})`,
                     p.payload.name
                   ]}
                 />
-                <ReferenceLine x={0} stroke="rgba(255,255,255,0.2)" />
+                <ReferenceLine x={0} stroke="rgba(0,103,77,0.25)" />
                 <Bar dataKey="absVal" radius={[0, 4, 4, 0]}>
                   {data.features.map((f, i) => (
                     <Cell key={i} fill={f.direction === "positive" ? "#34d399" : f.direction === "negative" ? "#f87171" : "#64748b"} />
@@ -160,7 +160,7 @@ export function ExplainableAI() {
           <div className="grid md:grid-cols-2 gap-3">
             {data.features.map((f, i) => {
               const Icon = f.direction === "positive" ? ArrowUp : f.direction === "negative" ? ArrowDown : Minus;
-              const color = f.direction === "positive" ? "text-emerald-400" : f.direction === "negative" ? "text-red-400" : "text-muted-foreground";
+              const color = f.direction === "positive" ? "text-emerald-600" : f.direction === "negative" ? "text-red-600" : "text-muted-foreground";
               return (
                 <GlassCard key={i} className="p-4">
                   <div className="flex items-center justify-between mb-1">

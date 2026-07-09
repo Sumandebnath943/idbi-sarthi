@@ -97,7 +97,7 @@ export function AnalyticsDashboard() {
               <Pie data={data.segmentDist} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={90} paddingAngle={2}>
                 {data.segmentDist.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
               </Pie>
-              <Tooltip contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }} />
               <Legend wrapperStyle={{ fontSize: 10 }} />
             </PieChart>
           </ResponsiveContainer>
@@ -108,10 +108,10 @@ export function AnalyticsDashboard() {
           <SectionTitle>Lead Pipeline Stages</SectionTitle>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={data.stageDist} margin={{ left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="name" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-              <Tooltip contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,103,77,0.08)" />
+              <XAxis dataKey="name" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+              <YAxis tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+              <Tooltip contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }} />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                 {data.stageDist.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
               </Bar>
@@ -124,10 +124,10 @@ export function AnalyticsDashboard() {
           <SectionTitle>Health Score Distribution</SectionTitle>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={data.healthDist} margin={{ left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="band" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-              <Tooltip contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,103,77,0.08)" />
+              <XAxis dataKey="band" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+              <YAxis tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+              <Tooltip contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }} />
               <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                 {data.healthDist.map((d, i) => {
                   const color = d.band === "Excellent" ? "#34d399" : d.band === "Good" ? "#22d3ee" : d.band === "Fair" ? "#fbbf24" : "#f87171";
@@ -142,10 +142,10 @@ export function AnalyticsDashboard() {
           <SectionTitle>Risk Band Distribution</SectionTitle>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={data.riskDist} margin={{ left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="band" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-              <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-              <Tooltip contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,103,77,0.08)" />
+              <XAxis dataKey="band" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+              <YAxis tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+              <Tooltip contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }} />
               <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                 {data.riskDist.map((d, i) => {
                   const color = d.band === "Low" ? "#34d399" : d.band === "Moderate" ? "#22d3ee" : d.band === "High" ? "#fbbf24" : "#f87171";
@@ -162,11 +162,11 @@ export function AnalyticsDashboard() {
         <SectionTitle action={<TrendingUp className="h-3.5 w-3.5 text-primary" />}>Monthly Transaction Volume & Value (6 months)</SectionTitle>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={data.monthlyTxn} margin={{ left: -10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="month" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-            <YAxis yAxisId="left" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-            <YAxis yAxisId="right" orientation="right" tick={{ fill: "#94a3b8", fontSize: 10 }} stroke="rgba(255,255,255,0.1)" />
-            <Tooltip contentStyle={{ background: "rgba(20,20,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,103,77,0.08)" />
+            <XAxis dataKey="month" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+            <YAxis yAxisId="left" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+            <YAxis yAxisId="right" orientation="right" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" />
+            <Tooltip contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }} />
             <Legend wrapperStyle={{ fontSize: 10 }} />
             <Line yAxisId="left" type="monotone" dataKey="transactions" stroke="#22d3ee" strokeWidth={2} dot={{ r: 3 }} name="Transactions" />
             <Line yAxisId="right" type="monotone" dataKey="value" stroke="#a78bfa" strokeWidth={2} dot={{ r: 3 }} name="Value (Cr INR)" />
@@ -180,7 +180,7 @@ export function AnalyticsDashboard() {
         <div className="space-y-2">
           {data.topRMs.map((rm, i) => (
             <div key={rm.id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-              <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-amber-500/30 text-amber-300" : "bg-muted text-muted-foreground"}`}>
+              <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-amber-500/30 text-amber-700" : "bg-muted text-muted-foreground"}`}>
                 {i + 1}
               </div>
               <div className="h-9 w-9 rounded-lg bg-primary/15 flex items-center justify-center">
@@ -224,11 +224,11 @@ export function AnalyticsDashboard() {
                   </TableCell>
                   <TableCell className="py-2"><Badge variant="outline" className="text-[9px]">{r.segment}</Badge></TableCell>
                   <TableCell className="py-2">
-                    <span className={`text-xs font-mono font-semibold ${r.healthScore >= 720 ? "text-emerald-400" : r.healthScore >= 600 ? "text-cyan-400" : r.healthScore >= 480 ? "text-amber-400" : "text-red-400"}`}>{r.healthScore}</span>
+                    <span className={`text-xs font-mono font-semibold ${r.healthScore >= 720 ? "text-emerald-600" : r.healthScore >= 600 ? "text-cyan-600" : r.healthScore >= 480 ? "text-amber-600" : "text-red-600"}`}>{r.healthScore}</span>
                   </TableCell>
                   <TableCell className="py-2">
                     <div className="flex items-center gap-1.5">
-                      <span className={`text-xs font-mono ${r.riskProb < 10 ? "text-emerald-400" : r.riskProb < 25 ? "text-cyan-400" : r.riskProb < 50 ? "text-amber-400" : "text-red-400"}`}>{r.riskProb}%</span>
+                      <span className={`text-xs font-mono ${r.riskProb < 10 ? "text-emerald-600" : r.riskProb < 25 ? "text-cyan-600" : r.riskProb < 50 ? "text-amber-600" : "text-red-600"}`}>{r.riskProb}%</span>
                       <BandBadge band={r.riskBand} />
                     </div>
                   </TableCell>

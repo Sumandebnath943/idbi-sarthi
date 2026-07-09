@@ -12,10 +12,10 @@ type Props = {
 
 // Static demo notifications — surfaced when the bell is clicked
 const NOTIFICATIONS = [
-  { id: 1, icon: AlertTriangle, color: "text-amber-400", title: "High-risk customer detected", body: "CUST-1007 probability of default rose to 32%", time: "5 min ago" },
-  { id: 2, icon: UserPlus, color: "text-cyan-400", title: "New lead assigned", body: "Ritu Bansal · Home Loan · INR 65L", time: "23 min ago" },
-  { id: 3, icon: TrendingUp, color: "text-emerald-400", title: "Wealth AUM milestone", body: "RM-203 crossed INR 400 Cr book size", time: "1 hr ago" },
-  { id: 4, icon: ShieldAlert, color: "text-red-400", title: "NPA flag raised", body: "CUST-1019 entered SMA-2 stage", time: "2 hr ago" },
+  { id: 1, icon: AlertTriangle, color: "text-amber-600", title: "High-risk customer detected", body: "CUST-1007 probability of default rose to 32%", time: "5 min ago" },
+  { id: 2, icon: UserPlus, color: "text-cyan-600", title: "New lead assigned", body: "Ritu Bansal · Home Loan · INR 65L", time: "23 min ago" },
+  { id: 3, icon: TrendingUp, color: "text-emerald-600", title: "Wealth AUM milestone", body: "RM-203 crossed INR 400 Cr book size", time: "1 hr ago" },
+  { id: 4, icon: ShieldAlert, color: "text-red-600", title: "NPA flag raised", body: "CUST-1019 entered SMA-2 stage", time: "2 hr ago" },
 ];
 
 export function Topbar({ active, onSelect }: Props) {
