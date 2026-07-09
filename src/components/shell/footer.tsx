@@ -8,11 +8,11 @@ export function Footer() {
       <div className="px-4 lg:px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Sparkles className="h-3 w-3 text-primary" />
-          <span className="font-medium text-foreground/80">RM Copilot</span>
+          <span className="font-medium text-foreground/80">IDBI SARTHI</span>
           <span className="text-muted-foreground/60">·</span>
-          <span>Hackathon MVP</span>
-          <span className="text-muted-foreground/60">·</span>
-          <span>Synthetic data — no real PII</span>
+          <span>Smart AI Relationship & Trust Hub Intelligence</span>
+          <span className="text-muted-foreground/60 hidden sm:inline">·</span>
+          <span className="hidden sm:inline">Synthetic data — no real PII</span>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">

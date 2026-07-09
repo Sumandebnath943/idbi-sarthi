@@ -63,3 +63,46 @@ Stage Summary:
 - LLM Chat confirmed operational (real GLM responses, not fallback)
 - Dev server stable on port 3000
 - Ready for hackathon demo
+
+---
+Task ID: 3 (IDBI branding + Groq + data fixes)
+Agent: Main (super-z)
+Task: Rename to IDBI SARTHI, apply IDBI brand colors, fix hamburger/notifications, integrate Groq API, fix customer data uniqueness
+
+Work Log:
+- Web-searched IDBI Bank brand colors: confirmed teal #00836C (Observatory) + saffron orange #F58220 (Orange Passion)
+- Renamed app to "IDBI SARTHI" (Smart AI Relationship & Trust Hub Intelligence) — updated layout metadata, sidebar brand (gradient teal-to-saffron badge), footer text, sidebar status
+- Rewrote globals.css with IDBI brand tokens: teal primary (#00836C), saffron accent (#F58220), navy-tinted dark background, gradient-text now teal→saffron, custom scrollbar teal, glow-accent teal, new glow-saffron utility
+- Topbar hamburger now opens a full mobile drawer (left slide-in, backdrop, all 12 modules grouped by category, IDBI gradient brand header)
+- Notifications bell now opens a dropdown with 4 sample alerts (high-risk customer, new lead, AUM milestone, NPA flag) — clicking any alert jumps to Next Best Action module
+- Replaced chat/route.ts to use Groq API (https://api.groq.com/openai/v1/chat/completions, model: llama-3.3-70b-versatile) with z-ai-web-dev-sdk as fallback. Reads GROQ_API_KEY from process.env. Added GET /api/chat status endpoint. Updated system prompt to identify as "IDBI SARTHI"
+- Created .env.example with instructions on how to add GROQ_API_KEY
+- Fixed customer data uniqueness in data.ts:
+  * Account openedOn dates: were hardcoded (2018-04-12, 2019-08-01, etc. for ALL customers) → now random per customer between 2015-2024
+  * Transaction descriptions: salary was "Acme Corp" for everyone → now picks from 40 real Indian employers (TCS, Infosys, Reliance, etc.)
+  * Shopping: was always "Amazon Purchase" → now picks from 20 merchants (Amazon, Flipkart, Myntra, Croma, Nykaa, etc.)
+  * Food: was always "Swiggy Order" → picks from 14 (Swiggy, Zomato, Domino's, Starbucks, etc.)
+  * Bills: was always "Electricity Bill" → picks from 14 billers (BSES, Tata Power, Airtel, Jio, etc.)
+  * Investments: was always "Axis Bluechip" → picks from 10 funds (Mirae, SBI, Parag Parikh, HDFC, etc.)
+  * EMI: was always "Loan #1234" → picks from 8 loan labels
+  * UPI transfers: was always "UPI Transfer" → picks from 10 recipients
+  * Transaction dates: now vary per customer (1-7 day spacing, random start offset within last 30 days)
+  * Email domains: was always @email.com → now picks from 6 (gmail, yahoo, outlook, hotmail, rediffmail, icloud)
+  * Phone numbers: now fully random 9-digit suffix
+  * onboardingDate: now random per customer
+- Lint clean (0 errors, 0 warnings)
+- Verified in browser via Agent Browser:
+  * Page title: "IDBI SARTHI — AI Relationship Manager Copilot" ✓
+  * Notifications dropdown opens with 4 alerts ✓
+  * Hamburger opens mobile drawer with all modules ✓
+  * Customer Arjun Iyer (CUST-1001): email arjun.iyer@rediffmail.com, salary from Tata Steel, account dates 2023-10-15 / 2015-08-27 ✓
+  * Customer Priya Patel (CUST-1002): email priya.patel@yahoo.in, MF SIP - HDFC Midcap, account dates 2024-01-03 / 2016-01-05 / 2015-03-18 / 2024-09-01 ✓ (totally different from Arjun)
+  * Chat fallback (no GROQ_API_KEY set): LLM correctly identifies as "IDBI SARTHI" and references POL-001 through POL-004 ✓
+  * GET /api/chat returns provider status: {provider: "zai-default", groqConfigured: false, hint: "Set GROQ_API_KEY..."} ✓
+
+Stage Summary:
+- App renamed to IDBI SARTHI with full IDBI brand identity (teal + saffron, NO logo used)
+- Hamburger and notifications buttons now fully functional
+- Groq API integrated; just needs GROQ_API_KEY in .env.local to activate
+- All 24 customers now have unique account dates, transaction descriptions, employer names, merchant names, email domains, phone numbers — no more shared boilerplate data
+- Ready for user to add Groq key

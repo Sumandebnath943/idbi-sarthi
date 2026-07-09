@@ -108,8 +108,23 @@ const pick = <T,>(arr: T[], i: number): T => arr[i % arr.length];
 
 const firstNames = ["Arjun","Priya","Rahul","Sneha","Vikram","Ananya","Karthik","Divya","Aditya","Meera","Rohan","Pooja","Sanjay","Kavya","Nikhil","Isha","Vivek","Neha","Amit","Shreya","Manish","Aishwarya","Rajesh","Lakshmi"];
 const lastNames = ["Sharma","Iyer","Reddy","Nair","Patel","Mehta","Gupta","Rao","Kapoor","Singh","Joshi","Desai","Bhat","Menon","Verma","Chopra"];
-const cities = ["Mumbai","Bengaluru","Delhi","Hyderabad","Chennai","Pune","Kolkata","Ahmedabad","Jaipur","Kochi"];
+const cities = ["Mumbai","Bengaluru","Delhi","Hyderabad","Chennai","Pune","Kolkata","Ahmedabad","Jaipur","Kochi","Indore","Chandigarh","Lucknow","Bhopal","Coimbatore","Visakhapatnam"];
 const segments: Customer["segment"][] = ["Retail","Priority","Wealth","NRI"];
+
+// Realistic employer pool (varied industries)
+const employers = ["TCS","Infosys","Wipro","HCL Technologies","Accenture","Capgemini","Cognizant","Tech Mahindra","L&T Infotech","Mphasis","ICICI Lombard","HDFC Life","SBI Life","Bajaj Allianz","Reliance Industries","Tata Steel","Adani Group","Mahindra & Mahindra","Maruti Suzuki","Hero MotoCorp","Bharti Airtel","Vodafone Idea","Jio Platforms","Sun Pharma","Dr. Reddy's Labs","Cipla","Lupin","Apollo Hospitals","Fortis Healthcare","Asian Paints","Britannia","Nestle India","ITC Limited","Hindustan Unilever","NTPC","Power Grid Corp","ONGC","GAIL","Bharat Petroleum","Indian Oil"];
+// Merchants for shopping
+const shoppingMerchants = ["Amazon India","Flipkart","Myntra","Ajio","Croma","Reliance Digital","Tata Cliq","Nykaa","BigBasket","Swiggy Instamart","Zepto","Blinkit","Decathlon","Lifestyle","Shoppers Stop","Pantaloons","Westside","Max Fashion","H&M","Zara"];
+// Food delivery / dining
+const foodMerchants = ["Swiggy","Zomato","Domino's","McDonald's","KFC","Pizza Hut","Biryani Blues","Behrouz Biryani","Faasos","EatFit","Theobroma","Starbucks","Cafe Coffee Day","Chaayos"];
+// Billers
+const billers = ["BSES Rajdhani","Tata Power","Adani Electricity","MSEB","BEST","Airtel Postpaid","Jio Postpaid","Vi Postpaid","Delhi Jal Board","BWSSB","Indraprastha Gas","Mahanagar Gas","DTH Tata Sky","Airtel DTH"];
+// Investment instruments
+const mutualFunds = ["Axis Bluechip Fund","Mirae Asset Large Cap","SBI Small Cap","Parag Parikh Flexi Cap","HDFC Midcap","Kotak Emerging Equities","Nippon India Pharma Fund","ICICI Pru Technology","UTI Nifty Index","Quant Active Fund"];
+// Loan products (for EMI descriptions)
+const loanLabels = ["Home Loan #4421","Car Loan #7812","Personal Loan #3398","Education Loan #2210","Two-Wheeler Loan #6634","Business Loan #9912","Gold Loan #5503","Credit Card EMI #1107"];
+// UPI transfer recipients
+const upiRecipients = ["Family Transfer","Rent Payment","Friend Reimburse","Merchant UPI","Self Account Transfer","Donation","Pooja Samagri","Tuition Fees","Maintenance","Carpool Share"];
 
 const now = new Date("2025-06-15T00:00:00Z");
 
@@ -130,8 +145,18 @@ function rng(seed: string) {
 }
 
 // ---- Generate Customers ----
+// Helper to format a random date in YYYY-MM-DD between two epoch ms
+function randDate(r: () => number, fromMs: number, toMs: number): string {
+  const ms = fromMs + Math.floor(r() * (toMs - fromMs));
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
 function genCustomers(): Customer[] {
   const out: Customer[] = [];
+  // Date bounds: 2015-01-01 to 2024-12-31
+  const dateFrom = new Date("2015-01-01").getTime();
+  const dateTo = new Date("2024-12-31").getTime();
+
   for (let i = 0; i < 24; i++) {
     const id = `CUST-${String(1001 + i)}`;
     const r = rng(id);
@@ -157,28 +182,51 @@ function genCustomers(): Customer[] {
     const npaFlag = r() < 0.08;
     const rmId = `RM-${String(201 + (i % 4))}`;
 
-    // accounts
-    const accounts: Account[] = [
-      { id: `ACC-${id}-SAV`, type: "Savings", balance: totalSavings, openedOn: "2018-04-12", currency: "INR" },
-      { id: `ACC-${id}-DEM`, type: "Demat", balance: totalInvestments, openedOn: "2019-08-01", currency: "INR" },
-    ];
-    if (segment !== "Retail") accounts.push({ id: `ACC-${id}-CC`, type: "Credit Card", balance: outstandingDebt, openedOn: "2020-03-15", currency: "INR" });
-    if (emiBurden > 0.3) accounts.push({ id: `ACC-${id}-LOAN`, type: "Loan", balance: Math.floor(monthlyIncome * 12 * emiBurden * 2), openedOn: "2022-06-20", currency: "INR" });
-    if (segment === "Wealth") accounts.push({ id: `ACC-${id}-FD`, type: "FD", balance: Math.floor(totalSavings * 0.5), openedOn: "2021-11-05", currency: "INR" });
+    // Per-customer employer (for salary credit) — locked across that customer's salary transactions
+    const employer = pick(employers, Math.floor(r() * employers.length));
+    // Per-customer mutual fund (for SIP)
+    const sipFund = pick(mutualFunds, Math.floor(r() * mutualFunds.length));
+    // Per-customer loan label (if applicable)
+    const loanLabel = pick(loanLabels, Math.floor(r() * loanLabels.length));
 
-    // transactions (last 6)
+    // Accounts — each customer has unique openedOn dates
+    const accounts: Account[] = [
+      { id: `ACC-${id}-SAV`, type: "Savings", balance: totalSavings, openedOn: randDate(r, dateFrom, dateTo), currency: "INR" },
+      { id: `ACC-${id}-DEM`, type: "Demat", balance: totalInvestments, openedOn: randDate(r, dateFrom, dateTo), currency: "INR" },
+    ];
+    if (segment !== "Retail") accounts.push({ id: `ACC-${id}-CC`, type: "Credit Card", balance: outstandingDebt, openedOn: randDate(r, dateFrom, dateTo), currency: "INR" });
+    if (emiBurden > 0.3) accounts.push({ id: `ACC-${id}-LOAN`, type: "Loan", balance: Math.floor(monthlyIncome * 12 * emiBurden * 2), openedOn: randDate(r, dateFrom, dateTo), currency: "INR" });
+    if (segment === "Wealth") accounts.push({ id: `ACC-${id}-FD`, type: "FD", balance: Math.floor(totalSavings * 0.5), openedOn: randDate(r, dateFrom, dateTo), currency: "INR" });
+
+    // Transactions — varied dates, varied merchants/employers per customer
     const txCats: Transaction["category"][] = ["Salary","Shopping","Bills","Food","Investment","EMI","Transfer","Other"];
     const transactions: Transaction[] = [];
+    // Vary the day-spacing per customer (1-7 days between txns)
+    const daySpacing = 1 + Math.floor(r() * 6);
+    // Start date varies per customer within last 30 days
+    const startOffset = Math.floor(r() * 30);
     for (let t = 0; t < 8; t++) {
       const cat = pick(txCats, t + i);
       const isCredit = cat === "Salary" || (cat === "Transfer" && r() > 0.5);
       const amount = cat === "Salary" ? monthlyIncome
                    : isCredit ? Math.floor(r() * 20000)
                    : -Math.floor(r() * 15000 + 500);
+      // Vary date: irregular spacing with some randomness
+      const dayOffset = startOffset + t * daySpacing + Math.floor(r() * 3);
+      const txDate = new Date(now.getTime() - dayOffset * 86400000).toISOString().slice(0, 10);
+      // Per-category description with random merchant
+      let description = "Misc Debit";
+      if (cat === "Salary") description = `Salary Credit - ${employer}`;
+      else if (cat === "EMI") description = `EMI Debit - ${loanLabel}`;
+      else if (cat === "Shopping") description = pick(shoppingMerchants, Math.floor(r() * shoppingMerchants.length));
+      else if (cat === "Food") description = pick(foodMerchants, Math.floor(r() * foodMerchants.length));
+      else if (cat === "Bills") description = pick(billers, Math.floor(r() * billers.length));
+      else if (cat === "Investment") description = `MF SIP - ${sipFund}`;
+      else if (cat === "Transfer") description = pick(upiRecipients, Math.floor(r() * upiRecipients.length));
       transactions.push({
         id: `TX-${id}-${t}`,
-        date: new Date(now.getTime() - t * 86400000 * 3).toISOString().slice(0,10),
-        description: cat === "Salary" ? "Salary Credit - Acme Corp" : cat === "EMI" ? "EMI Debit - Loan #1234" : cat === "Shopping" ? "Amazon Purchase" : cat === "Food" ? "Swiggy Order" : cat === "Bills" ? "Electricity Bill Payment" : cat === "Investment" ? "MF SIP - Axis Bluechip" : cat === "Transfer" ? "UPI Transfer" : "Misc Debit",
+        date: txDate,
+        description,
         amount,
         category: cat,
       });
@@ -193,14 +241,20 @@ function genCustomers(): Customer[] {
     if (npaFlag) riskFactors.push({ label: "NPA Flag", weight: 0.6 });
     if (monthlyExpense / monthlyIncome > 0.7) riskFactors.push({ label: "High Expense Ratio", weight: 0.2 });
 
+    // Random phone number — fully unique
+    const phoneSuffix = String(100000000 + Math.floor(r() * 899999999)).slice(0, 9);
+    // Random email domain — varied
+    const emailDomains = ["gmail.com","yahoo.in","outlook.com","hotmail.com","rediffmail.com","icloud.com"];
+    const emailDomain = pick(emailDomains, Math.floor(r() * emailDomains.length));
+
     out.push({
       id, name, age,
-      email: `${name.toLowerCase().replace(" ", ".")}@email.com`,
-      phone: `+91 9${String(800000000 + i * 1234567).slice(0,9)}`,
-      city: pick(cities, i + Math.floor(r() * 10)),
+      email: `${name.toLowerCase().replace(" ", ".")}@${emailDomain}`,
+      phone: `+91 9${phoneSuffix}`,
+      city: pick(cities, i + Math.floor(r() * cities.length)),
       segment,
       kycStatus: r() > 0.85 ? "Pending" : r() > 0.95 ? "Review" : "Verified",
-      onboardingDate: `20${17 + (i % 7)}-0${1 + (i % 9)}-1${i % 9}`,
+      onboardingDate: randDate(r, dateFrom, dateTo),
       rmId,
       monthlyIncome, monthlyExpense, totalSavings, totalInvestments,
       outstandingDebt, creditUtilization, creditLimit, emiBurden,
