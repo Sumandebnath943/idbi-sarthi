@@ -1,7 +1,7 @@
 // Scoring / Recommendation / Risk / NBA engines
 // All logic is deterministic & explainable (no black-box LLM call needed for scoring).
 
-import { customers, policies, schemes, loanProducts, type Customer, type Lead } from "./data";
+import { customers, leads, policies, schemes, loanProducts, rms, type Customer, type Lead } from "./data";
 
 // ---- Financial Health Score ----
 // 0-900 weighted score with 5 factors
@@ -512,4 +512,4 @@ function leadStageDist() {
 }
 
 // ---- Helper exports ----
-export { customers, policies, schemes, loanProducts, leads, rms };
+export { customers, policies, schemes, loanProducts };
