@@ -509,4 +509,11 @@ function segmentsMap() {
   return Object.entries(map).map(([name, value]) => ({ name, value }));
 }
 
-function leadStageDis
+function leadStageDist() {
+  const map: Record<string, number> = {};
+  for (const l of leads) map[l.stage] = (map[l.stage] || 0) + 1;
+  return Object.entries(map).map(([name, value]) => ({ name, value }));
+}
+
+// ---- Helper exports ----
+export { customers, policies, schemes, loanProducts };

@@ -218,4 +218,12 @@ export function LeadQualification() {
                       </li>
                     ))}
                   </ul>
-    
+                </div>
+              </div>
+            )}
+          </GlassCard>
+        </div>
+      )}
+    </div>
+  );
+}

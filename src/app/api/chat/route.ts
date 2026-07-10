@@ -161,4 +161,28 @@ Respond in 4-8 sentences unless asked for more detail.`;
   // No Groq key configured — use z-ai-web-dev-sdk fallback
   try {
     const reply = await callZaiFallback(messages);
-    retur
+    return NextResponse.json({
+      reply,
+      model: "zai-default",
+      provider: "zai-default",
+      warning: "GROQ_API_KEY is not set. Chat is using a built-in fallback that only works on the original hosted environment — on your own machine it will likely fail. Add GROQ_API_KEY to .env.local (free key at https://console.groq.com/keys) and restart the dev server to enable real chat.",
+    });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "Unknown error";
+    return NextResponse.json({
+      reply: `Chat is not configured. To enable it, create a .env.local file in the project root with GROQ_API_KEY=gsk_your_key (free key at https://console.groq.com/keys), then restart the dev server.`,
+      error: msg,
+      fallback: true,
+    }, { status: 503 });
+  }
+}
+
+// Helpful status endpoint
+export async function GET() {
+  return NextResponse.json({
+    provider: GROQ_API_KEY ? "groq" : "zai-default",
+    model: GROQ_API_KEY ? `groq/${GROQ_MODEL}` : "zai-fallback",
+    groqConfigured: !!GROQ_API_KEY,
+    hint: GROQ_API_KEY ? "" : "Set GROQ_API_KEY in .env.local to enable Groq.",
+  });
+}

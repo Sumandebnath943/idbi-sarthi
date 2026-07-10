@@ -75,4 +75,12 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     filename: body.filename ?? "document.txt",
-    t
+    type,
+    confidence: signals[0]?.confidence ?? 0,
+    signals,
+    entities,
+    flags,
+    summary: `${type} document processed. ${entities.length} entities extracted. ${flags.length} compliance flag(s).`,
+    wordCount: text.split(/\s+/).length,
+  });
+}

@@ -19,4 +19,16 @@ export async function GET(req: Request) {
   const total = result.length;
   const page = result.slice(offset, offset + limit);
 
-  return NextRe
+  return NextResponse.json({
+    total,
+    offset,
+    limit,
+    count: page.length,
+    hasMore: offset + page.length < total,
+    customers: page.map(c => ({
+      id: c.id, name: c.name, age: c.age, segment: c.segment, city: c.city,
+      monthlyIncome: c.monthlyIncome, rmId: c.rmId, kycStatus: c.kycStatus,
+      npaFlag: c.npaFlag, digitalEngagement: c.digitalEngagement,
+    })),
+  });
+}

@@ -124,4 +124,11 @@ export function SchemeMatcher() {
                     <span>{m.matchedCriteria.length}/{m.matchedCriteria.length + m.missingCriteria.length} criteria met</span>
                   </div>
                 </GlassCard>
-              
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

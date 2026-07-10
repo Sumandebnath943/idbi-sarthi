@@ -154,4 +154,11 @@ export function CustomerDashboard() {
                     <Badge variant="outline" className="text-[9px]">{(rf.weight*100).toFixed(0)}% weight</Badge>
                   </div>
                 ))}
-              </d
+              </div>
+            )}
+          </GlassCard>
+        </div>
+      )}
+    </div>
+  );
+}

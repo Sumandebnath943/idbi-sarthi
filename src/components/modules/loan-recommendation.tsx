@@ -137,4 +137,10 @@ export function LoanRecommendation() {
                   </ul>
                 </div>
               </GlassCard>
-  
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

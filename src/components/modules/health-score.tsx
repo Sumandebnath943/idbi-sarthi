@@ -131,4 +131,10 @@ export function HealthScore() {
             <StatCard label="Top Strength" value={data.factors.reduce((a, b) => a.raw > b.raw ? a : b).label} tone="success" />
             <StatCard label="Weakest Factor" value={data.factors.reduce((a, b) => a.raw < b.raw ? a : b).label} tone="warning" />
             <StatCard label="Sum of Weights" value={`${(data.factors.reduce((s, f) => s + f.weight, 0)*100).toFixed(0)}%`} />
-            <StatCard label="Confidence" value="High" 
+            <StatCard label="Confidence" value="High" tone="primary" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

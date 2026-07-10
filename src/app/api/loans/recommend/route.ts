@@ -13,4 +13,9 @@ const RecommendSchema = z.object({
 export async function POST(req: Request) {
   const parsed = await parseBody(req, RecommendSchema);
   if (parsed.response) return parsed.response;
-  const { customerId, amount, tenureMonths } = par
+  const { customerId, amount, tenureMonths } = parsed.data;
+  const c = getCustomer(customerId);
+  if (!c) return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+  const recs = recommendLoans(c, amount, tenureMonths);
+  return NextResponse.json({ customerId: c.id, customerName: c.name, recommendations: recs });
+}

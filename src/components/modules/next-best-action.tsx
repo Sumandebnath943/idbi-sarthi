@@ -139,4 +139,14 @@ export function NextBestAction() {
                     </span>
                   </div>
                   <Badge variant="outline" className="text-[9px] text-emerald-600 border-emerald-500/30 bg-emerald-500/5">
-                    <TrendingUp className="h-2.5 w-2.5 mr-1" />{a.e
+                    <TrendingUp className="h-2.5 w-2.5 mr-1" />{a.expectedUplift}
+                  </Badge>
+                </div>
+              </GlassCard>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

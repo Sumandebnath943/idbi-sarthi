@@ -174,4 +174,12 @@ export function ExplainableAI() {
                       {f.contribution > 0 ? "+" : ""}{(f.contribution * 100).toFixed(1)}%
                     </span>
                   </div>
-                </
+                </GlassCard>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

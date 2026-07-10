@@ -18,4 +18,7 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const q = (url.searchParams.get("q") ?? "").slice(0, 500);
-  if (!q.trim()) re
+  if (!q.trim()) return NextResponse.json({ error: "query required" }, { status: 400 });
+  const results = ragSearch(q);
+  return NextResponse.json({ query: q, count: results.length, results });
+}

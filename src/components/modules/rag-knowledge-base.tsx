@@ -143,4 +143,10 @@ export function RagKnowledgeBase() {
                   <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-muted/40 text-muted-foreground">#{t}</span>
                 ))}
               </div>
-          
+            </GlassCard>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -245,4 +245,10 @@ export function DocumentIntelligence() {
                   Word count: {result.wordCount}
                 </div>
               </GlassCard>
-      
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

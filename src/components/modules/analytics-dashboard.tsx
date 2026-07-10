@@ -239,4 +239,9 @@ export function AnalyticsDashboard() {
                 </TableRow>
               ))}
             </TableBody>
-          
+          </Table>
+        </div>
+      </GlassCard>
+    </div>
+  );
+}

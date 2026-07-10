@@ -31,4 +31,8 @@ export function useCustomers() {
         if (!cancelled) setLoading(false);
       }
     })();
-  
+    return () => { cancelled = true; };
+  }, []);
+
+  return { customers, loading };
+}
