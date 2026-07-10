@@ -56,3 +56,5 @@ server.log
 # Custom ignores
 *.tar
 *.docx
+# Keep the example env (documentation, no secrets)
+!.env.example

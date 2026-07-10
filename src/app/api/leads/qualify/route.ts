@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { qualifyLead, type LeadScoreInput } from "@/lib/scoring";
+import { z } from "zod";
+import { qualifyLead } from "@/lib/scoring";
+import { parseBody } from "@/lib/api-utils";
 
-export async function POST(req: Request) {
-  const body = (await req.json()) as LeadScoreInput;
-  const result = qualifyLead(body);
-  return NextResponse.json(result);
-}
+const LeadScoreSchema = z.object({
+  income: z.number().finite().nonnegative(),
+  cibil: z.number().finite().min(300).max(900),
+ 

@@ -35,9 +35,9 @@ export function LoanRecommendation() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ customerId, amount, tenureMonths: tenure }),
     })
-      .then(r => r.json())
+      .then(async r => { if (!r.ok) throw new Error("bad response"); return r.json(); })
       .then(d => { setRecs(d.recommendations ?? []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .catch(() => { setRecs([]); setLoading(false); });
   }
 
   return (
@@ -137,10 +137,4 @@ export function LoanRecommendation() {
                   </ul>
                 </div>
               </GlassCard>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+  

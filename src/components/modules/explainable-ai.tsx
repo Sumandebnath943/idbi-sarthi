@@ -30,10 +30,11 @@ export function ExplainableAI() {
       setLoading(true);
       try {
         const r = await fetch(`/api/explain?customerId=${customerId}`);
+        if (!r.ok) { if (!cancelled) setData(null); return; }
         const d = await r.json();
         if (!cancelled) { setData(d); }
       } catch {
-        // ignore
+        if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -48,7 +49,7 @@ export function ExplainableAI() {
     <div>
       <ModuleHeader
         title="Explainable AI"
-        desc="SHAP-style feature attribution for loan approval decisions"
+        desc="Transparent per-feature attribution for loan approval decisions (SHAP-style heuristic)"
         icon={Brain}
       />
       <div className="max-w-md mb-6">
@@ -173,12 +174,4 @@ export function ExplainableAI() {
                       {f.contribution > 0 ? "+" : ""}{(f.contribution * 100).toFixed(1)}%
                     </span>
                   </div>
-                </GlassCard>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+                </

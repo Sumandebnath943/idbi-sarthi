@@ -42,6 +42,7 @@ export function AnalyticsDashboard() {
     (async () => {
       try {
         const r = await fetch("/api/analytics");
+        if (!r.ok) { if (!cancelled) setLoading(false); return; }
         const d = await r.json();
         if (!cancelled) { setData(d); setLoading(false); }
       } catch {
@@ -238,9 +239,4 @@ export function AnalyticsDashboard() {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
-        </div>
-      </GlassCard>
-    </div>
-  );
-}
+          

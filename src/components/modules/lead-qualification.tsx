@@ -47,6 +47,7 @@ export function LeadQualification() {
     (async () => {
       try {
         const r = await fetch("/api/leads");
+        if (!r.ok) { if (!cancelled) setLoading(false); return; }
         const d = await r.json();
         if (!cancelled) { setLeads(d.leads ?? []); setLoading(false); }
       } catch {
@@ -63,7 +64,7 @@ export function LeadQualification() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ income, cibil, age, existingCustomer, interest, sourceValue }),
     })
-      .then(r => r.json())
+      .then(async r => { if (!r.ok) throw new Error("bad response"); return r.json(); })
       .then(d => { setResult(d); setSubmitting(false); toast.success(`Lead scored: ${d.score}/100 → ${d.stage}`); })
       .catch(() => { setSubmitting(false); toast.error("Failed to qualify lead"); });
   }
@@ -217,12 +218,4 @@ export function LeadQualification() {
                       </li>
                     ))}
                   </ul>
-                </div>
-              </div>
-            )}
-          </GlassCard>
-        </div>
-      )}
-    </div>
-  );
-}
+    

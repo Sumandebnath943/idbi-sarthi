@@ -98,9 +98,9 @@ export function DocumentIntelligence() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, filename }),
     })
-      .then(r => r.json())
+      .then(async r => { if (!r.ok) throw new Error("bad response"); return r.json(); })
       .then(d => { setResult(d); setLoading(false); toast.success("Document analyzed"); })
-      .catch(() => { setLoading(false); toast.error("Analysis failed"); });
+      .catch(() => { setResult(null); setLoading(false); toast.error("Analysis failed"); });
   }
 
   function loadSample(s: { name: string; text: string }) {
@@ -245,10 +245,4 @@ export function DocumentIntelligence() {
                   Word count: {result.wordCount}
                 </div>
               </GlassCard>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+      

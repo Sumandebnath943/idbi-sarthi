@@ -44,9 +44,9 @@ export function RagKnowledgeBase() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: final }),
     })
-      .then(r => r.json())
+      .then(async r => { if (!r.ok) throw new Error("bad response"); return r.json(); })
       .then(d => { setResults(d.results ?? []); setLoading(false); })
-      .catch(() => { setLoading(false); toast.error("Search failed"); });
+      .catch(() => { setResults([]); setLoading(false); toast.error("Search failed"); });
   }
 
   return (
@@ -143,10 +143,4 @@ export function RagKnowledgeBase() {
                   <span key={t} className="text-[9px] px-1.5 py-0.5 rounded bg-muted/40 text-muted-foreground">#{t}</span>
                 ))}
               </div>
-            </GlassCard>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+          

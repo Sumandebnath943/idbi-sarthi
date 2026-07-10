@@ -11,7 +11,7 @@ import { policies } from "@/lib/data";
  *
  * To enable Groq:
  *   1. Create a free key at https://console.groq.com/keys
- *   2. Create or edit /home/z/my-project/.env.local and add:
+ *   2. Create or edit .env.local in the project root and add:
  *        GROQ_API_KEY=gsk_your_key_here
  *   3. Optional: override the model with GROQ_MODEL=llama-3.3-70b-versatile
  *   4. Restart the dev server (the file is auto-loaded by Next.js)
@@ -60,8 +60,20 @@ async function callZaiFallback(messages: ChatMessage[]): Promise<string> {
   return completion?.choices?.[0]?.message?.content ?? "I'm unable to respond right now.";
 }
 
+const MAX_HISTORY = 10;
+const MAX_MESSAGE_LEN = 4000;
+
 export async function POST(req: Request) {
-  const body = (await req.json()) as { message: string; customerId?: string; history?: { role: string; content: string }[] };
+  let body: { message?: string; customerId?: string; history?: { role: string; content: string }[] };
+  try {
+    body = (await req.json()) as { message?: string; customerId?: string; history?: { role: string; content: string }[] };
+  } catch {
+    return NextResponse.json({ error: "Invalid or empty JSON body" }, { status: 400 });
+  }
+  if (typeof body.message !== "string" || body.message.trim().length === 0) {
+    return NextResponse.json({ error: "message is required" }, { status: 400 });
+  }
+  body.message = body.message.slice(0, MAX_MESSAGE_LEN);
 
   // Build context from customer if provided
   let customerContext = "";
@@ -104,9 +116,17 @@ ${customerContext || "No specific customer selected."}
 
 Respond in 4-8 sentences unless asked for more detail.`;
 
+  // Sanitize client-supplied history: only user/assistant roles are allowed
+  // (never trust a client-sent "system" role — prevents prompt-injection), and
+  // cap to the most recent MAX_HISTORY turns to bound token usage/cost.
+  const safeHistory: ChatMessage[] = (Array.isArray(body.history) ? body.history : [])
+    .filter(m => m && typeof m.content === "string" && (m.role === "user" || m.role === "assistant"))
+    .slice(-MAX_HISTORY)
+    .map(m => ({ role: m.role as "user" | "assistant", content: m.content.slice(0, MAX_MESSAGE_LEN) }));
+
   const messages: ChatMessage[] = [
     { role: "system", content: systemPrompt },
-    ...(body.history ?? []).map(m => ({ role: m.role as "user" | "assistant", content: m.content })),
+    ...safeHistory,
     { role: "user", content: body.message },
   ];
 
@@ -130,7 +150,7 @@ Respond in 4-8 sentences unless asked for more detail.`;
       } catch (e2: unknown) {
         const msg2 = e2 instanceof Error ? e2.message : "Unknown error";
         return NextResponse.json({
-          reply: `I couldn't reach the AI service. Groq error: ${msg}. Fallback error: ${msg2}. Please check GROQ_API_KEY in .env.local.`,
+          reply: `I couldn't reach the AI service right now. Please verify GROQ_API_KEY in .env.local and try again.`,
           error: msg2,
           fallback: true,
         }, { status: 503 });
@@ -141,28 +161,4 @@ Respond in 4-8 sentences unless asked for more detail.`;
   // No Groq key configured — use z-ai-web-dev-sdk fallback
   try {
     const reply = await callZaiFallback(messages);
-    return NextResponse.json({
-      reply,
-      model: "zai-default",
-      provider: "zai-default",
-      warning: "GROQ_API_KEY not set. Using built-in fallback LLM. Add GROQ_API_KEY to .env.local to enable Groq.",
-    });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "Unknown error";
-    return NextResponse.json({
-      reply: `I couldn't reach any AI service. Error: ${msg}. To enable chat: create /home/z/my-project/.env.local with GROQ_API_KEY=gsk_your_key (get one at https://console.groq.com/keys).`,
-      error: msg,
-      fallback: true,
-    }, { status: 503 });
-  }
-}
-
-// Helpful status endpoint
-export async function GET() {
-  return NextResponse.json({
-    provider: GROQ_API_KEY ? "groq" : "zai-default",
-    model: GROQ_API_KEY ? `groq/${GROQ_MODEL}` : "zai-fallback",
-    groqConfigured: !!GROQ_API_KEY,
-    hint: GROQ_API_KEY ? "" : "Set GROQ_API_KEY in .env.local to enable Groq.",
-  });
-}
+    retur

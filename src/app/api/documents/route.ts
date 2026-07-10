@@ -4,8 +4,14 @@ import { NextResponse } from "next/server";
 type DocType = "Aadhaar" | "PAN" | "Bank Statement" | "Salary Slip" | "ITR" | "Unknown";
 
 export async function POST(req: Request) {
-  const body = (await req.json()) as { text?: string; filename?: string };
-  const text = (body.text ?? "").toLowerCase();
+  let body: { text?: string; filename?: string };
+  try {
+    body = (await req.json()) as { text?: string; filename?: string };
+  } catch {
+    return NextResponse.json({ error: "Invalid or empty JSON body" }, { status: 400 });
+  }
+  // Cap payload to avoid running regexes over an unbounded string (CPU DoS guard).
+  const text = (body.text ?? "").slice(0, 100000).toLowerCase();
   if (!text || text.length < 5) {
     return NextResponse.json({ error: "Text content required (min 5 chars)" }, { status: 400 });
   }
@@ -69,12 +75,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     filename: body.filename ?? "document.txt",
-    type,
-    confidence: signals[0]?.confidence ?? 0,
-    signals,
-    entities,
-    flags,
-    summary: `${type} document processed. ${entities.length} entities extracted. ${flags.length} compliance flag(s).`,
-    wordCount: text.split(/\s+/).length,
-  });
-}
+    t

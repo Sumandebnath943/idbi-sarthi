@@ -83,7 +83,7 @@ export function riskPredict(c: Customer): RiskAssessment {
     const d = Math.min(0.20, (c.emiBurden - 0.4) * 0.6);
     p += d; drivers.push({ label: "Elevated EMI Burden", impact: d });
   }
-  if (c.monthlyExpense / c.monthlyIncome > 0.7) {
+  if (c.monthlyIncome > 0 && c.monthlyExpense / c.monthlyIncome > 0.7) {
     const d = 0.10; p += d;
     drivers.push({ label: "High Expense Ratio", impact: d });
   }
@@ -220,8 +220,12 @@ export function qualifyLead(input: LeadScoreInput): {
   return { score: s, stage, rationale: r };
 }
 
-// ---- Explainable AI (SHAP-style) ----
-// Returns feature contribution to a binary outcome (e.g. "approve loan")
+// ---- Explainable AI (SHAP-style heuristic) ----
+// Returns per-feature contributions to a binary outcome (e.g. "approve loan").
+// NOTE: this is a transparent rule-based approximation, not true SHAP —
+// contributions are independent heuristics and do not strictly sum to
+// (prediction - baseValue). Presented as an interpretable proxy, not a
+// game-theoretic attribution.
 export function explainDecision(c: Customer): {
   outcome: "Approve" | "Review" | "Decline";
   baseValue: number;
@@ -328,7 +332,7 @@ export type NBA = {
 
 export function nextBestActions(): NBA[] {
   const out: NBA[] = [];
-  for (const c of customers.slice(0, 18)) {
+  for (const c of customers) {
     const r = riskPredict(c);
     const hs = healthScore(c);
 
@@ -505,11 +509,4 @@ function segmentsMap() {
   return Object.entries(map).map(([name, value]) => ({ name, value }));
 }
 
-function leadStageDist() {
-  const map: Record<string, number> = {};
-  for (const l of leads) map[l.stage] = (map[l.stage] || 0) + 1;
-  return Object.entries(map).map(([name, value]) => ({ name, value }));
-}
-
-// ---- Helper exports ----
-export { customers, policies, schemes, loanProducts };
+function leadStageDis

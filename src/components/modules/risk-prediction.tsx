@@ -32,10 +32,11 @@ export function RiskPrediction() {
       setLoading(true);
       try {
         const r = await fetch(`/api/risk/predict?customerId=${customerId}`);
+        if (!r.ok) { if (!cancelled) setData(null); return; }
         const d = await r.json();
         if (!cancelled) { setData(d); }
       } catch {
-        // ignore
+        if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -119,10 +120,4 @@ export function RiskPrediction() {
             <StatCard label="Top Risk Driver" value={data.drivers.find(d => d.impact > 0)?.label ?? "None"} tone="danger" icon={TrendingUp} />
             <StatCard label="Top Mitigant" value={data.drivers.find(d => d.impact < 0)?.label ?? "None"} tone="success" icon={TrendingDown} />
             <StatCard label="SMA Stage" value={data.smaStage} tone={data.smaStage === "None" ? "success" : data.smaStage === "NPA" ? "danger" : "warning"} />
-            <StatCard label="Confidence" value="High (88%)" tone="primary" />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+            <StatCard label="Confidence" value="High (88%)" 

@@ -7,6 +7,5 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
-};
-
-export default nextConfig;
+  async headers() {
+    // Baseli

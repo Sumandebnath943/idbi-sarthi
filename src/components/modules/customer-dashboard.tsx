@@ -21,10 +21,11 @@ export function CustomerDashboard() {
       setLoading(true);
       try {
         const r = await fetch(`/api/customers/${customerId}`);
+        if (!r.ok) { if (!cancelled) setCustomer(null); return; }
         const d = await r.json();
         if (!cancelled) { setCustomer(d); }
       } catch {
-        // ignore
+        if (!cancelled) setCustomer(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -153,11 +154,4 @@ export function CustomerDashboard() {
                     <Badge variant="outline" className="text-[9px]">{(rf.weight*100).toFixed(0)}% weight</Badge>
                   </div>
                 ))}
-              </div>
-            )}
-          </GlassCard>
-        </div>
-      )}
-    </div>
-  );
-}
+              </d

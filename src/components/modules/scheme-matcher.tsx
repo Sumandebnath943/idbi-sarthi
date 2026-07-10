@@ -31,10 +31,11 @@ export function SchemeMatcher() {
       setLoading(true);
       try {
         const r = await fetch(`/api/schemes/match?customerId=${customerId}`);
+        if (!r.ok) { if (!cancelled) setMatches([]); return; }
         const d = await r.json();
         if (!cancelled) { setMatches(d.matches ?? []); }
       } catch {
-        // ignore
+        if (!cancelled) setMatches([]);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -123,11 +124,4 @@ export function SchemeMatcher() {
                     <span>{m.matchedCriteria.length}/{m.matchedCriteria.length + m.missingCriteria.length} criteria met</span>
                   </div>
                 </GlassCard>
-              );
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+              

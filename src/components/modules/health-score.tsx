@@ -32,10 +32,11 @@ export function HealthScore() {
       setLoading(true);
       try {
         const r = await fetch(`/api/health-score?customerId=${customerId}`);
+        if (!r.ok) { if (!cancelled) setData(null); return; }
         const d = await r.json();
         if (!cancelled) { setData(d); }
       } catch {
-        // ignore
+        if (!cancelled) setData(null);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -130,10 +131,4 @@ export function HealthScore() {
             <StatCard label="Top Strength" value={data.factors.reduce((a, b) => a.raw > b.raw ? a : b).label} tone="success" />
             <StatCard label="Weakest Factor" value={data.factors.reduce((a, b) => a.raw < b.raw ? a : b).label} tone="warning" />
             <StatCard label="Sum of Weights" value={`${(data.factors.reduce((s, f) => s + f.weight, 0)*100).toFixed(0)}%`} />
-            <StatCard label="Confidence" value="High" tone="primary" />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+            <StatCard label="Confidence" value="High" 

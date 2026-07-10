@@ -24,14 +24,11 @@ export function useCustomers() {
     (async () => {
       try {
         const r = await fetch("/api/customers?limit=100");
+        if (!r.ok) { if (!cancelled) { setCustomers([]); setLoading(false); } return; }
         const d = await r.json();
         if (!cancelled) { setCustomers(d.customers ?? []); setLoading(false); }
       } catch {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
-  }, []);
-
-  return { customers, loading };
-}
+  

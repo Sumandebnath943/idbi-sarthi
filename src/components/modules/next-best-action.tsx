@@ -32,9 +32,10 @@ export function NextBestAction() {
     setLoading(true);
     try {
       const r = await fetch("/api/nba", { method: "POST" });
+      if (!r.ok) { toast.error("Failed to generate actions"); return; }
       const d = await r.json();
       setActions(d.actions ?? []);
-      toast.success(`Generated ${d.count} actions`);
+      toast.success(`Generated ${d.count ?? 0} actions`);
     } catch {
       toast.error("Failed to generate actions");
     } finally {
@@ -49,8 +50,9 @@ export function NextBestAction() {
       setLoading(true);
       try {
         const r = await fetch("/api/nba", { method: "POST" });
+        if (!r.ok) { if (!cancelled) toast.error("Failed to generate actions"); return; }
         const d = await r.json();
-        if (!cancelled) { setActions(d.actions ?? []); toast.success(`Generated ${d.count} actions`); }
+        if (!cancelled) { setActions(d.actions ?? []); toast.success(`Generated ${d.count ?? 0} actions`); }
       } catch {
         if (!cancelled) toast.error("Failed to generate actions");
       } finally {
@@ -137,14 +139,4 @@ export function NextBestAction() {
                     </span>
                   </div>
                   <Badge variant="outline" className="text-[9px] text-emerald-600 border-emerald-500/30 bg-emerald-500/5">
-                    <TrendingUp className="h-2.5 w-2.5 mr-1" />{a.expectedUplift}
-                  </Badge>
-                </div>
-              </GlassCard>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+                    <TrendingUp className="h-2.5 w-2.5 mr-1" />{a.e
