@@ -1,0 +1,15 @@
+import { NextResponse } from "next/server";
+import { nextBestActions } from "@/lib/scoring";
+
+function respond() {
+  const actions = nextBestActions();
+  return NextResponse.json({ count: actions.length, actions });
+}
+
+export async function GET() {
+  return respond();
+}
+
+export async function POST() {
+  return respond();
+}

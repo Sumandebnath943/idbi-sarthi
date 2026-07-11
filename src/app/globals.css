@@ -1,0 +1,179 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ===== IDBI Brand Theme — Light, extracted from IDBI Internet Banking screenshot ===== */
+/* Source: IDBI Bank Internet Banking page
+   - Primary teal:    #00674D (deep brand teal — header, nav, primary buttons)
+   - Orange accent:   #FF7A00 (CTAs, highlights, sidebar accents)
+   - Light mint:      #E6F7F0 (gradient fill, soft backgrounds)
+   - Off-white:       #F5F5F5 (secondary background)
+   - Pure white:      #FFFFFF (main background, text on dark)
+*/
+:root {
+  --radius: 0.75rem;
+
+  /* IDBI brand tokens (raw) */
+  --idbi-teal: #00674D;
+  --idbi-teal-light: #008A66;
+  --idbi-teal-dark: #004D38;
+  --idbi-orange: #FF7A00;
+  --idbi-orange-light: #FF9540;
+  --idbi-orange-dark: #CC6200;
+  --idbi-mint: #E6F7F0;
+  --idbi-mint-dark: #C8EAD9;
+  --idbi-offwhite: #F5F5F5;
+  --idbi-navy: #0A2540;
+
+  /* ===== Light theme tokens (default, locked) ===== */
+  --background: #F5F5F5;
+  --foreground: #0F2A22;  /* very dark teal-tinted text */
+  --card: #FFFFFF;
+  --card-foreground: #0F2A22;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F2A22;
+  /* Primary = IDBI teal */
+  --primary: #00674D;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E6F7F0;
+  --secondary-foreground: #00674D;
+  --muted: #F0F4F2;
+  --muted-foreground: #5A6B65;
+  /* Accent = IDBI orange */
+  --accent: #FF7A00;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #D9E5E0;
+  --input: #FFFFFF;
+  --ring: #00674D;
+  /* Chart palette - IDBI teal family + orange + complementary */
+  --chart-1: #00674D;  /* IDBI teal */
+  --chart-2: #FF7A00;  /* IDBI orange */
+  --chart-3: #008A66;  /* lighter teal */
+  --chart-4: #E6F7F0;  /* mint */
+  --chart-5: #6B4FBB;  /* complementary violet */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0F2A22;
+  --sidebar-primary: #00674D;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E6F7F0;
+  --sidebar-accent-foreground: #00674D;
+  --sidebar-border: #D9E5E0;
+  --sidebar-ring: #00674D;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html, body {
+    @apply bg-background text-foreground;
+    min-height: 100%;
+  }
+  body {
+    /* IDBI-branded subtle backdrop: mint + soft orange glow */
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, rgba(0, 103, 77, 0.06), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(255, 122, 0, 0.05), transparent 60%),
+      radial-gradient(800px 600px at 50% 110%, rgba(0, 103, 77, 0.04), transparent 60%);
+    background-attachment: fixed;
+  }
+}
+
+/* ===== Custom utilities ===== */
+/* Light card with subtle teal-tinted shadow */
+.glass {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 103, 77, 0.04), 0 4px 16px -8px rgba(0, 103, 77, 0.08);
+}
+.glass-strong {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 24px -8px rgba(0, 103, 77, 0.18), 0 2px 6px rgba(0, 103, 77, 0.06);
+}
+/* Teal glow (primary) */
+.glow-accent {
+  box-shadow: 0 0 0 1px rgba(0, 103, 77, 0.25), 0 8px 32px -8px rgba(0, 103, 77, 0.35);
+}
+/* Orange glow (accent / urgent) */
+.glow-saffron {
+  box-shadow: 0 0 0 1px rgba(255, 122, 0, 0.30), 0 8px 32px -8px rgba(255, 122, 0, 0.45);
+}
+.text-glow {
+  text-shadow: 0 0 14px rgba(0, 103, 77, 0.30);
+}
+/* Gradient text: teal → orange (IDBI brand) */
+.gradient-text {
+  background: linear-gradient(135deg, #008A66 0%, #00674D 40%, #FF7A00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* Orange gradient for highlights */
+.gradient-saffron {
+  background: linear-gradient(135deg, #FF7A00 0%, #FF9540 100%);
+}
+/* Teal gradient for primary surfaces */
+.gradient-teal {
+  background: linear-gradient(135deg, #00674D 0%, #008A66 100%);
+}
+
+/* Custom scrollbar — teal */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 103, 77, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 103, 77, 0.45); }
+
+/* Grid pattern background helper */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 103, 77, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 103, 77, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
