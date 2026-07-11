@@ -175,10 +175,8 @@ export function Topbar({ active, onSelect }: Props) {
           <div className="relative w-72 max-w-[80vw] h-full bg-sidebar/95 backdrop-blur-xl border-r border-border/60 flex flex-col animate-in slide-in-from-left">
             <div className="flex items-center justify-between px-5 py-5 border-b border-border/60">
               <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl flex items-center justify-center glow-accent"
-                     style={{ background: "linear-gradient(135deg, var(--idbi-teal) 0%, var(--idbi-saffron) 100%)" }}>
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.svg" alt="IDBI SARTHI" width={36} height={36} className="h-9 w-9 rounded-xl glow-accent" />
                 <div>
                   <div className="text-sm font-bold gradient-text">IDBI SARTHI</div>
                   <div className="text-[9px] text-muted-foreground uppercase tracking-widest">AI RM Copilot</div>

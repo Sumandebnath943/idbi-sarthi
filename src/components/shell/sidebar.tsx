@@ -2,7 +2,7 @@
 
 import { MODULES, MODULE_GROUPS, type ModuleKey } from "@/lib/modules";
 import { cn } from "@/lib/utils";
-import { Sparkles, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { StackStatus } from "@/components/shell/stack-status";
 
 type Props = {
@@ -15,10 +15,8 @@ export function Sidebar({ active, onSelect }: Props) {
     <aside className="hidden lg:flex w-64 shrink-0 flex-col border-r border-border/60 bg-sidebar/40 backdrop-blur-xl">
       {/* Brand */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-border/60">
-        <div className="relative h-9 w-9 rounded-xl flex items-center justify-center glow-accent"
-             style={{ background: "linear-gradient(135deg, var(--idbi-teal) 0%, var(--idbi-saffron) 100%)" }}>
-          <Sparkles className="h-5 w-5 text-white" />
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="IDBI SARTHI" width={36} height={36} className="h-9 w-9 rounded-xl glow-accent" />
         <div>
           <div className="text-sm font-bold tracking-wide gradient-text">IDBI SARTHI</div>
           <div className="text-[9px] text-muted-foreground uppercase tracking-widest">AI RM Copilot · v1.0</div>
