@@ -1,0 +1,13 @@
+{
+  "name": "IDBI SARTHI — AI Relationship Manager Copilot",
+  "short_name": "IDBI SARTHI",
+  "description": "Smart AI Relationship & Trust Hub Intelligence — an AI copilot for IDBI Bank Relationship Managers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F5",
+  "theme_color": "#00674D",
+  "icons": [
+    { "src": "/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

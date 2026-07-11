@@ -19,7 +19,11 @@ export const metadata: Metadata = {
   description: "IDBI SARTHI (Smart AI Relationship & Trust Hub Intelligence) — an AI-powered Relationship Manager Copilot combining Customer 360, Financial Health Scoring, Loan Recommendation, Risk Prediction, Explainable AI, RAG Knowledge Base, and Next Best Action recommendations.",
   keywords: ["IDBI", "IDBI SARTHI", "AI Banking", "Relationship Manager", "RAG", "Explainable AI", "Financial Health Score"],
   authors: [{ name: "IDBI Hackathon Team" }],
-  icons: { icon: "/logo.svg" },
+  manifest: "/site.webmanifest",
+};
+
+export const viewport = {
+  themeColor: "#00674D",
 };
 
 export default function RootLayout({
