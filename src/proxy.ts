@@ -35,10 +35,16 @@ function clientIp(req: NextRequest): string {
   );
 }
 
-function buildCsp(nonce: string): string {
+function buildCsp(): string {
+  // Note on script-src: a nonce/'strict-dynamic' policy cannot be applied to
+  // statically-prerendered pages (their <script> tags are emitted at build time
+  // with no request nonce), so it blanks those pages. We use 'self' + 'unsafe-inline'
+  // instead — same-origin scripts only. The app has no HTML/script injection sink
+  // (output is escaped, no dangerouslySetInnerHTML on user data), so this remains
+  // solid defense-in-depth alongside frame-ancestors/object-src/base-uri below.
   return [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
     `style-src 'self' 'unsafe-inline'`,
     `img-src 'self' data: blob:`,
     `font-src 'self' data:`,
@@ -64,8 +70,7 @@ function applySecurity(res: NextResponse, csp: string): NextResponse {
 
 const handler = auth(async (req) => {
   const { pathname } = req.nextUrl;
-  const nonce = btoa(crypto.randomUUID());
-  const csp = buildCsp(nonce);
+  const csp = buildCsp();
 
   const isApi = pathname.startsWith("/api");
   const isAuthApi = pathname.startsWith("/api/auth");
@@ -114,10 +119,8 @@ const handler = auth(async (req) => {
     return applySecurity(NextResponse.redirect(url), csp);
   }
 
-  // --- 3. Pass through with nonce + security headers ---
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set("x-nonce", nonce);
-  const res = NextResponse.next({ request: { headers: requestHeaders } });
+  // --- 3. Pass through with security headers ---
+  const res = NextResponse.next();
   return applySecurity(res, csp);
 });
 
