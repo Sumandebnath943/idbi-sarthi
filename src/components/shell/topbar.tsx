@@ -176,7 +176,8 @@ export function Topbar({ active, onSelect }: Props) {
             <div className="flex items-center justify-between px-5 py-5 border-b border-border/60">
               <div className="flex items-center gap-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.svg" alt="IDBI SARTHI" width={36} height={36} className="h-9 w-9 rounded-xl glow-accent" />
+                <img src="/logo-mark.svg" alt="IDBI SARTHI" width={36} height={36}
+                     className="h-9 w-9 rounded-xl shadow-sm ring-1 ring-black/5" />
                 <div>
                   <div className="text-sm font-bold gradient-text">IDBI SARTHI</div>
                   <div className="text-[9px] text-muted-foreground uppercase tracking-widest">AI RM Copilot</div>
