@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   output: "standalone",
   /* config options here */
   typescript: {
-    ignoreBuildErrors: true,
+    // Type errors now fail the build (security-relevant type bugs surface early).
+    ignoreBuildErrors: false,
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
   // Native / WASM addons used by Document Intelligence & RAG. Keep them out of the
   // webpack/turbopack bundle so their runtime binaries and model loading work.
   serverExternalPackages: [

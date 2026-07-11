@@ -330,9 +330,9 @@ export type NBA = {
   deadline: string;
 };
 
-export function nextBestActions(): NBA[] {
+export function nextBestActions(list: Customer[] = customers): NBA[] {
   const out: NBA[] = [];
-  for (const c of customers) {
+  for (const c of list) {
     const r = riskPredict(c);
     const hs = healthScore(c);
 
@@ -484,34 +484,40 @@ export function matchSchemes(c: Customer): {
 }
 
 // ---- Analytics Aggregations ----
-export function analyticsSummary() {
-  const totalAUM = customers.reduce((s, c) => s + c.totalSavings + c.totalInvestments, 0);
-  const totalCustomers = customers.length;
-  const avgHealth = Math.round(customers.reduce((s, c) => s + healthScore(c).score, 0) / customers.length);
-  const highRisk = customers.filter(c => ["High", "Critical"].includes(riskPredict(c).band)).length;
-  const segmentDist = segmentsMap();
-  const stageDist = leadStageDist();
+export function analyticsSummary(
+  custList: Customer[] = customers,
+  leadList: Lead[] = leads,
+  rmId: string | null = null,
+) {
+  const totalCustomers = custList.length;
+  const denom = totalCustomers || 1; // avoid divide-by-zero for an empty book
+  const totalAUM = custList.reduce((s, c) => s + c.totalSavings + c.totalInvestments, 0);
+  const avgHealth = Math.round(custList.reduce((s, c) => s + healthScore(c).score, 0) / denom);
+  const highRisk = custList.filter(c => ["High", "Critical"].includes(riskPredict(c).band)).length;
+  const segmentDist = segmentsMap(custList);
+  const stageDist = leadStageDist(leadList);
   return {
     totalAUM,
     totalCustomers,
     avgHealth,
     highRiskCount: highRisk,
-    riskRate: highRisk / totalCustomers,
+    riskRate: highRisk / denom,
     segmentDist,
     stageDist,
-    topRMs: rms.slice().sort((a,b) => b.bookSize - a.bookSize),
+    // RMs see only their own row; elevated roles see the full leaderboard.
+    topRMs: (rmId ? rms.filter(r => r.id === rmId) : rms.slice()).sort((a, b) => b.bookSize - a.bookSize),
   };
 }
 
-function segmentsMap() {
+function segmentsMap(list: Customer[] = customers) {
   const map: Record<string, number> = {};
-  for (const c of customers) map[c.segment] = (map[c.segment] || 0) + 1;
+  for (const c of list) map[c.segment] = (map[c.segment] || 0) + 1;
   return Object.entries(map).map(([name, value]) => ({ name, value }));
 }
 
-function leadStageDist() {
+function leadStageDist(list: Lead[] = leads) {
   const map: Record<string, number> = {};
-  for (const l of leads) map[l.stage] = (map[l.stage] || 0) + 1;
+  for (const l of list) map[l.stage] = (map[l.stage] || 0) + 1;
   return Object.entries(map).map(([name, value]) => ({ name, value }));
 }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCustomer } from "@/lib/data";
+import { requireUser, canAccessCustomer } from "@/lib/auth-guard";
 import {
   extractFromImage,
   extractFromPdf,
@@ -12,10 +13,17 @@ import {
   validateAadhaar,
   validateIFSC,
   maskAadhaar,
+  maskPAN,
+  maskAccount,
+  maskPhone,
+  maskEmail,
+  redactPII,
   crossCheckCustomer,
   type CrossCheck,
   type FieldCheck,
 } from "@/lib/kyc-validate";
+import { audit, clientIpFromHeaders } from "@/lib/audit";
+import { validateUpload, sanitizeImage } from "@/lib/upload-validate";
 
 // transformers/tesseract/unpdf are native/WASM — must run on the Node runtime.
 export const runtime = "nodejs";
@@ -30,7 +38,7 @@ function buildValidations(f: ExtractedFields): Validation[] {
   const v: Validation[] = [];
   if (f.panNumber) {
     const r = validatePAN(f.panNumber);
-    v.push({ label: `PAN ${f.panNumber}`, valid: r.valid, reason: r.reason });
+    v.push({ label: `PAN ${maskPAN(f.panNumber)}`, valid: r.valid, reason: r.reason });
   }
   if (f.aadhaarNumber) {
     const r = validateAadhaar(f.aadhaarNumber);
@@ -95,12 +103,12 @@ function toEntities(f: ExtractedFields): { type: string; value: string }[] {
   push("Father's Name", f.fatherName);
   push("Date of Birth", f.dob);
   push("Gender", f.gender);
-  push("PAN Number", f.panNumber);
+  if (f.panNumber) push("PAN Number (masked)", maskPAN(f.panNumber));
   if (f.aadhaarNumber) push("Aadhaar (masked)", maskAadhaar(f.aadhaarNumber));
   push("Address", f.address);
-  push("Phone", f.phone);
-  push("Email", f.email);
-  push("Account Number", f.accountNumber);
+  if (f.phone) push("Phone (masked)", maskPhone(f.phone));
+  if (f.email) push("Email (masked)", maskEmail(f.email));
+  if (f.accountNumber) push("Account Number (masked)", maskAccount(f.accountNumber));
   push("IFSC", f.ifsc);
   push("Employer", f.employer);
   if (f.grossPay) push("Gross Pay", `INR ${f.grossPay.toLocaleString("en-IN")}`);
@@ -125,20 +133,26 @@ async function runExtraction(req: Request): Promise<ExtractionOutcome> {
     if (file.size > MAX_FILE_BYTES) return { ok: false, error: "File exceeds 8 MB limit", status: 413 };
 
     const buf = await file.arrayBuffer();
-    const type = file.type || "";
+    const bytes = new Uint8Array(buf);
     const name = file.name || "document";
 
-    if (type.startsWith("image/")) {
-      const dataUrl = `data:${type};base64,${Buffer.from(buf).toString("base64")}`;
-      return { ok: true, result: await extractFromImage(dataUrl), filename: name, customerId };
-    }
-    if (type === "application/pdf" || name.toLowerCase().endsWith(".pdf")) {
+    // Verify the real file type by magic bytes (not the client-supplied MIME).
+    const check = validateUpload(bytes, ["pdf", "png", "jpeg", "webp"], true);
+    if (!check.ok) return { ok: false, error: check.error, status: check.status };
+
+    if (check.kind === "pdf") {
       return { ok: true, result: await extractFromPdf(buf), filename: name, customerId };
     }
-    // treat everything else as text
-    const text = new TextDecoder().decode(buf).slice(0, MAX_TEXT_LEN);
-    if (text.trim().length < 5) return { ok: false, error: "Unsupported or empty file", status: 400 };
-    return { ok: true, result: await extractFromText(text), filename: name, customerId };
+    if (check.kind === "text") {
+      const text = new TextDecoder().decode(buf).slice(0, MAX_TEXT_LEN);
+      if (text.trim().length < 5) return { ok: false, error: "Unsupported or empty file", status: 400 };
+      return { ok: true, result: await extractFromText(text), filename: name, customerId };
+    }
+    // image kinds — strip EXIF / cap dimensions before OCR/vision
+    const clean = await sanitizeImage(buf, check.kind);
+    const mime = check.kind === "png" ? "image/png" : check.kind === "webp" ? "image/webp" : "image/jpeg";
+    const dataUrl = `data:${mime};base64,${clean.toString("base64")}`;
+    return { ok: true, result: await extractFromImage(dataUrl), filename: name, customerId };
   }
 
   // JSON path: pasted text (also used by the sample documents).
@@ -154,6 +168,9 @@ async function runExtraction(req: Request): Promise<ExtractionOutcome> {
 }
 
 export async function POST(req: Request) {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
+
   const ex = await runExtraction(req);
   if (!ex.ok) return NextResponse.json({ error: ex.error }, { status: ex.status });
 
@@ -165,7 +182,8 @@ export async function POST(req: Request) {
   let cross: CrossCheck | null = null;
   if (customerId) {
     const customer = getCustomer(customerId);
-    if (customer) {
+    // Only cross-check against a customer the caller is allowed to see.
+    if (customer && canAccessCustomer(gate.value, customer)) {
       cross = crossCheckCustomer(customer, {
         name: fields.name,
         phone: fields.phone,
@@ -180,13 +198,42 @@ export async function POST(req: Request) {
   const flags = buildFlags(fields, validations, result.confidence, cross);
   const entities = toEntities(fields);
 
-  // Never return the raw Aadhaar number to the client.
+  // Mask every sensitive identifier before it leaves the server. The raw values
+  // are used above for validation/cross-check, but only masked forms are returned.
   const safeFields: ExtractedFields = {
     ...fields,
     aadhaarNumber: fields.aadhaarNumber ? maskAadhaar(fields.aadhaarNumber) : undefined,
+    panNumber: fields.panNumber ? maskPAN(fields.panNumber) : undefined,
+    accountNumber: fields.accountNumber ? maskAccount(fields.accountNumber) : undefined,
+    phone: fields.phone ? maskPhone(fields.phone) : undefined,
+    email: fields.email ? maskEmail(fields.email) : undefined,
   };
 
-  const crossChecks: FieldCheck[] = cross?.checks ?? [];
+  // Mask contact identifiers in the cross-check display too — the match/mismatch
+  // status was already computed from the raw values inside crossCheckCustomer.
+  const crossChecks: FieldCheck[] = (cross?.checks ?? []).map((chk) => {
+    if (chk.field === "Phone") {
+      return { ...chk, documentValue: maskPhone(chk.documentValue), customerValue: maskPhone(chk.customerValue) };
+    }
+    if (chk.field === "Email") {
+      return { ...chk, documentValue: maskEmail(chk.documentValue), customerValue: maskEmail(chk.customerValue) };
+    }
+    return chk;
+  });
+
+  // Redact PII (Aadhaar/PAN/account/phone/email) from raw OCR text so it can be
+  // shown for context without leaking full identifiers (UIDAI/DPDP).
+  const safeRawText = redactPII(result.rawText).slice(0, 4000);
+
+  await audit({
+    type: "DOCUMENT_UPLOAD",
+    actorId: gate.value.id,
+    actorRole: gate.value.role,
+    target: customerId ?? undefined,
+    decision: "allow",
+    detail: `${fields.documentType} via ${result.method}; ${entities.length} field(s)`,
+    ip: clientIpFromHeaders(req.headers),
+  });
 
   return NextResponse.json({
     filename,
@@ -199,7 +246,7 @@ export async function POST(req: Request) {
     crossCheck: cross ? { verdict: cross.verdict, summary: cross.summary, checks: crossChecks } : null,
     flags,
     notes: result.notes,
-    rawText: result.rawText.slice(0, 4000),
+    rawText: safeRawText,
     summary: `${fields.documentType} processed via ${result.method}. ${entities.length} field(s), ${validations.length} validation(s), ${flags.length} flag(s).`,
     wordCount: result.rawText ? result.rawText.split(/\s+/).filter(Boolean).length : 0,
   });

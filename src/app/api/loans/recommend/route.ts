@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCustomer } from "@/lib/data";
 import { recommendLoans } from "@/lib/scoring";
 import { parseBody } from "@/lib/api-utils";
+import { requireCustomer } from "@/lib/auth-guard";
 
 const RecommendSchema = z.object({
   customerId: z.string().min(1),
@@ -14,8 +14,9 @@ export async function POST(req: Request) {
   const parsed = await parseBody(req, RecommendSchema);
   if (parsed.response) return parsed.response;
   const { customerId, amount, tenureMonths } = parsed.data;
-  const c = getCustomer(customerId);
-  if (!c) return NextResponse.json({ error: "Customer not found" }, { status: 404 });
+  const gate = await requireCustomer(customerId);
+  if (!gate.ok) return gate.res;
+  const c = gate.value.customer;
   const recs = recommendLoans(c, amount, tenureMonths);
   return NextResponse.json({ customerId: c.id, customerName: c.name, recommendations: recs });
 }

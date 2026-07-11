@@ -142,10 +142,13 @@ export function ExplainableAI() {
                 <YAxis type="category" dataKey="name" tick={{ fill: "#5A6B65", fontSize: 10 }} stroke="rgba(0,103,77,0.12)" width={130} />
                 <Tooltip
                   contentStyle={{ background: "rgba(255,255,255,0.98)", border: "1px solid rgba(0,103,77,0.15)", borderRadius: 8, fontSize: 11 }}
-                  formatter={(v: number, _n: string, p: { payload: Feature }) => [
-                    `${p.payload.contribution > 0 ? "+" : ""}${(p.payload.contribution * 100).toFixed(1)}% (${p.payload.value})`,
-                    p.payload.name
-                  ]}
+                  formatter={(v, _n, p) => {
+                    const f = (p as { payload: Feature }).payload;
+                    return [
+                      `${f.contribution > 0 ? "+" : ""}${(f.contribution * 100).toFixed(1)}% (${f.value})`,
+                      f.name,
+                    ];
+                  }}
                 />
                 <ReferenceLine x={0} stroke="rgba(0,103,77,0.25)" />
                 <Bar dataKey="absVal" radius={[0, 4, 4, 0]}>

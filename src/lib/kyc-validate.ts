@@ -78,6 +78,54 @@ export function maskAadhaar(aadhaar: string): string {
   return `XXXX-XXXX-${v.slice(-4)}`;
 }
 
+/** PAN AAAAA9999A -> AB XXXXXX 9A (keeps first 2 + last 2, masks the middle). */
+export function maskPAN(pan: string): string {
+  const v = pan.trim().toUpperCase();
+  if (v.length !== 10) return "XXXXXXXXXX";
+  return `${v.slice(0, 2)}XXXXXX${v.slice(-2)}`;
+}
+
+/** Account number -> keep only the last 4 digits. */
+export function maskAccount(acc: string): string {
+  const d = acc.replace(/\D/g, "");
+  if (d.length < 4) return "XXXXXXXX";
+  return `XXXX${d.slice(-4)}`;
+}
+
+/** Phone -> keep only the last 4 digits. */
+export function maskPhone(phone: string): string {
+  const d = phone.replace(/\D/g, "");
+  if (d.length < 4) return "XXXXXXXXXX";
+  return `XXXXXX${d.slice(-4)}`;
+}
+
+/** Email -> keep first local char + domain (a***@example.com). */
+export function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return "***";
+  const head = local.slice(0, 1);
+  return `${head}***@${domain}`;
+}
+
+/**
+ * Best-effort redaction of PII from free/OCR text before it is returned to a
+ * client or written anywhere. Scrubs Aadhaar, PAN, long account numbers, Indian
+ * phone numbers, and email addresses. Order matters (specific -> generic).
+ */
+export function redactPII(text: string): string {
+  return text
+    // Emails first (before digit rules touch them)
+    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, (m) => maskEmail(m))
+    // Aadhaar: 12 digits, optional spaces/hyphens in 4-4-4 groups
+    .replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, "XXXX XXXX XXXX")
+    // PAN
+    .replace(/\b[A-Z]{5}\d{4}[A-Z]\b/g, "XXXXXXXXXX")
+    // Long account-like numbers (11-18 digits)
+    .replace(/\b\d{11,18}\b/g, (m) => maskAccount(m))
+    // Indian mobile numbers (10 digits starting 6-9, optional +91/0 prefix)
+    .replace(/\b(?:\+91[\s-]?|0)?[6-9]\d{9}\b/g, (m) => maskPhone(m));
+}
+
 // ---- Name matching ----
 function normalizeName(n: string): string[] {
   return n

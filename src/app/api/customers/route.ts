@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { customers } from "@/lib/data";
+import { requireUser, scopeCustomers } from "@/lib/auth-guard";
 
 export async function GET(req: Request) {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
+
   const url = new URL(req.url);
   const q = url.searchParams.get("q")?.toLowerCase() ?? "";
   const segment = url.searchParams.get("segment");
@@ -12,7 +16,8 @@ export async function GET(req: Request) {
   const parsedOffset = parseInt(url.searchParams.get("offset") ?? "0", 10);
   const offset = Number.isFinite(parsedOffset) ? Math.max(parsedOffset, 0) : 0;
 
-  let result = customers;
+  // Scope to the caller's book (RMs); managers/compliance/admin see all.
+  let result = scopeCustomers(gate.value, customers);
   if (q) result = result.filter(c => c.name.toLowerCase().includes(q) || c.id.toLowerCase().includes(q) || c.city.toLowerCase().includes(q));
   if (segment && segment !== "All") result = result.filter(c => c.segment === segment);
 

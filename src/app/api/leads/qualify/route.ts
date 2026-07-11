@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { qualifyLead } from "@/lib/scoring";
 import { parseBody } from "@/lib/api-utils";
+import { requireUser } from "@/lib/auth-guard";
 
 const LeadScoreSchema = z.object({
   income: z.number().finite().nonnegative(),
@@ -13,6 +14,8 @@ const LeadScoreSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
   const parsed = await parseBody(req, LeadScoreSchema);
   if (parsed.response) return parsed.response;
   const result = qualifyLead(parsed.data);

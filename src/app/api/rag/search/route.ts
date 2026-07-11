@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { parseBody } from "@/lib/api-utils";
 import { answerQuery } from "@/lib/rag";
+import { requireUser } from "@/lib/auth-guard";
 
 // Embeddings run on the Node runtime (onnxruntime-node native addon).
 export const runtime = "nodejs";
@@ -11,6 +12,8 @@ const SearchSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
   const parsed = await parseBody(req, SearchSchema);
   if (parsed.response) return parsed.response;
   const result = await answerQuery(parsed.data.query);
@@ -18,6 +21,8 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
   const url = new URL(req.url);
   const q = (url.searchParams.get("q") ?? "").slice(0, 500);
   if (!q.trim()) return NextResponse.json({ error: "query required" }, { status: 400 });

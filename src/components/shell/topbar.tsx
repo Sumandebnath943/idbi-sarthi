@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, Menu, X, Bell, Sparkles, AlertTriangle, UserPlus, TrendingUp, ShieldAlert, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StackStatus } from "@/components/shell/stack-status";
+import { UserMenu } from "@/components/shell/user-menu";
 
 type Props = {
   active: ModuleKey;
@@ -161,6 +162,9 @@ export function Topbar({ active, onSelect }: Props) {
           <Sparkles className="h-3 w-3 text-primary" />
           <span className="text-[10px] font-semibold text-primary">AI ONLINE</span>
         </div>
+
+        {/* Signed-in user + sign out */}
+        <UserMenu />
       </header>
 
       {/* Mobile nav drawer */}

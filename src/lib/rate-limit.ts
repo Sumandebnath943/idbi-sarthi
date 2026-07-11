@@ -1,22 +1,12 @@
-// Lightweight in-memory fixed-window rate limiter.
+// Pluggable rate limiter.
+//   - Upstash Redis (durable, multi-instance, sliding window) when
+//     UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are set (prod / Vercel).
+//   - In-memory fixed-window fallback for zero-config local dev.
 //
-// Suitable for a single-instance deployment (hackathon / demo / self-hosted node).
-// For multi-instance or serverless-at-scale you would swap the Map for a shared
-// store such as Upstash Redis — the interface below stays the same.
+// Edge-safe: both backends run in the middleware (edge) runtime.
 
-type Bucket = { count: number; resetAt: number };
-
-const store = new Map<string, Bucket>();
-
-// Opportunistic cleanup so the Map doesn't grow unbounded over a long-lived process.
-let lastSweep = 0;
-function sweep(now: number) {
-  if (now - lastSweep < 60_000) return;
-  lastSweep = now;
-  for (const [key, b] of store) {
-    if (b.resetAt <= now) store.delete(key);
-  }
-}
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 export type RateLimitResult = {
   ok: boolean;
@@ -25,30 +15,76 @@ export type RateLimitResult = {
   retryAfterSec: number;
 };
 
+// ---- In-memory fallback (single instance / dev only) ----
+type Bucket = { count: number; resetAt: number };
+const memStore = new Map<string, Bucket>();
+let lastSweep = 0;
+function sweep(now: number) {
+  if (now - lastSweep < 60_000) return;
+  lastSweep = now;
+  for (const [k, b] of memStore) if (b.resetAt <= now) memStore.delete(k);
+}
+function memRateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
+  const now = Date.now();
+  sweep(now);
+  const existing = memStore.get(key);
+  if (!existing || existing.resetAt <= now) {
+    memStore.set(key, { count: 1, resetAt: now + windowMs });
+    return { ok: true, limit, remaining: limit - 1, retryAfterSec: 0 };
+  }
+  existing.count += 1;
+  if (existing.count > limit) {
+    return { ok: false, limit, remaining: 0, retryAfterSec: Math.max(1, Math.ceil((existing.resetAt - now) / 1000)) };
+  }
+  return { ok: true, limit, remaining: limit - existing.count, retryAfterSec: 0 };
+}
+
+// ---- Upstash Redis (durable, distributed) ----
+let redis: Redis | null | undefined;
+function getRedis(): Redis | null {
+  if (redis !== undefined) return redis;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  redis = url && token ? new Redis({ url, token }) : null;
+  return redis;
+}
+
+const limiters = new Map<string, Ratelimit>();
+function getLimiter(limit: number, windowMs: number): Ratelimit | null {
+  const r = getRedis();
+  if (!r) return null;
+  const cacheKey = `${limit}:${windowMs}`;
+  let l = limiters.get(cacheKey);
+  if (!l) {
+    l = new Ratelimit({
+      redis: r,
+      limiter: Ratelimit.slidingWindow(limit, `${windowMs} ms`),
+      prefix: "idbi-rl",
+      analytics: false,
+    });
+    limiters.set(cacheKey, l);
+  }
+  return l;
+}
+
 /**
- * Fixed-window rate limit.
- * @param key      unique caller key (e.g. `${ip}:${scope}`)
+ * @param key      unique caller key (prefer authenticated user id, else client IP)
  * @param limit    max requests allowed per window
  * @param windowMs window length in milliseconds
  */
-export function rateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
-  const now = Date.now();
-  sweep(now);
-
-  const existing = store.get(key);
-  if (!existing || existing.resetAt <= now) {
-    store.set(key, { count: 1, resetAt: now + windowMs });
-    return { ok: true, limit, remaining: limit - 1, retryAfterSec: 0 };
-  }
-
-  existing.count += 1;
-  if (existing.count > limit) {
+export async function rateLimit(key: string, limit: number, windowMs: number): Promise<RateLimitResult> {
+  const limiter = getLimiter(limit, windowMs);
+  if (!limiter) return memRateLimit(key, limit, windowMs);
+  try {
+    const { success, remaining, reset } = await limiter.limit(key);
     return {
-      ok: false,
+      ok: success,
       limit,
-      remaining: 0,
-      retryAfterSec: Math.max(1, Math.ceil((existing.resetAt - now) / 1000)),
+      remaining: Math.max(0, remaining),
+      retryAfterSec: success ? 0 : Math.max(1, Math.ceil((reset - Date.now()) / 1000)),
     };
+  } catch {
+    // If Redis is unreachable, fail open to the in-memory limiter rather than 500.
+    return memRateLimit(key, limit, windowMs);
   }
-  return { ok: true, limit, remaining: limit - existing.count, retryAfterSec: 0 };
 }

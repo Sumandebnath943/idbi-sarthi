@@ -4,12 +4,16 @@ import { embeddingProvider, embeddingDim } from "@/lib/embeddings";
 import { vectorBackend } from "@/lib/vectors";
 import { GEMINI_MODEL, GEMINI_EMBED_MODEL } from "@/lib/gemini";
 import { GROQ_TEXT_MODEL } from "@/lib/groq";
+import { requireUser } from "@/lib/auth-guard";
 
 export const runtime = "nodejs";
 
 // Reports the actually-active stack so the UI can label itself honestly
 // (replaces the old hardcoded "LLM: Groq · RAG: FAISS · DB: SQLite").
 export async function GET() {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
+
   const llm = activeLlmProvider();
   const emb = embeddingProvider();
   const vec = vectorBackend();

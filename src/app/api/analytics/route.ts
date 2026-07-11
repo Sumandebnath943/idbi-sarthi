@@ -1,16 +1,20 @@
 import { NextResponse } from "next/server";
 import { analyticsSummary } from "@/lib/scoring";
-import { customers } from "@/lib/data";
+import { customers, leads } from "@/lib/data";
 import { healthScore, riskPredict } from "@/lib/scoring";
+import { requireUser, scopeCustomers, isElevated, type SessionUser } from "@/lib/auth-guard";
 
-// The underlying dataset is static at runtime, so cache the assembled payload
-// briefly to avoid recomputing every score on every request.
-let cache: { at: number; payload: unknown } | null = null;
+// Cache per scope key (rmId or "all") so RMs and managers get correct views.
+const cache = new Map<string, { at: number; payload: unknown }>();
 const CACHE_TTL_MS = 60_000;
 
-function buildPayload() {
+function buildPayload(user: SessionUser) {
+  const custList = scopeCustomers(user, customers);
+  const leadList = isElevated(user) ? leads : leads.filter((l) => l.assignedRm === user.rmId);
+  const rmFilter = isElevated(user) ? null : user.rmId;
+
   // Compute each customer's scores exactly once and reuse everywhere.
-  const scored = customers.map((c) => {
+  const scored = custList.map((c) => {
     const hs = healthScore(c);
     const risk = riskPredict(c);
     return { c, hs, risk };
@@ -50,15 +54,20 @@ function buildPayload() {
     return { month, transactions, value };
   });
 
-  return { ...analyticsSummary(), healthDist, riskDist, monthlyTxn, rows };
+  return { ...analyticsSummary(custList, leadList, rmFilter), healthDist, riskDist, monthlyTxn, rows };
 }
 
 export async function GET() {
+  const gate = await requireUser();
+  if (!gate.ok) return gate.res;
+
+  const scopeKey = isElevated(gate.value) ? "all" : `rm:${gate.value.rmId}`;
   const now = Date.now();
-  if (cache && now - cache.at < CACHE_TTL_MS) {
-    return NextResponse.json(cache.payload);
+  const hit = cache.get(scopeKey);
+  if (hit && now - hit.at < CACHE_TTL_MS) {
+    return NextResponse.json(hit.payload);
   }
-  const payload = buildPayload();
-  cache = { at: now, payload };
+  const payload = buildPayload(gate.value);
+  cache.set(scopeKey, { at: now, payload });
   return NextResponse.json(payload);
 }
