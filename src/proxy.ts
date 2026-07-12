@@ -75,6 +75,8 @@ const handler = auth(async (req) => {
   const isApi = pathname.startsWith("/api");
   const isAuthApi = pathname.startsWith("/api/auth");
   const isLogin = pathname === "/login";
+  // Public marketing/auth pages that never require a session.
+  const isPublicPage = pathname === "/" || isLogin;
   const loggedIn = !!req.auth?.user;
 
   // --- 1. Rate limiting (API + auth endpoints only) ---
@@ -106,7 +108,7 @@ const handler = auth(async (req) => {
   if (isApi && !isAuthApi && !loggedIn) {
     return applySecurity(NextResponse.json({ error: "Unauthorized" }, { status: 401 }), csp);
   }
-  if (!isApi && !isLogin && !loggedIn) {
+  if (!isApi && !isPublicPage && !loggedIn) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("callbackUrl", pathname);
@@ -114,7 +116,7 @@ const handler = auth(async (req) => {
   }
   if (!isApi && isLogin && loggedIn) {
     const url = req.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/app";
     url.search = "";
     return applySecurity(NextResponse.redirect(url), csp);
   }

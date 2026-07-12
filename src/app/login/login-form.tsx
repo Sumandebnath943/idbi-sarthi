@@ -8,7 +8,7 @@ import { Loader2, LogIn, ShieldCheck } from "lucide-react";
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/";
+  const callbackUrl = params.get("callbackUrl") || "/app";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
