@@ -25,7 +25,7 @@ export function CustomerPicker({ value, onChange, label = "Customer", customers:
         <Skeleton className="h-9 w-full" />
       ) : (
         <Select value={value} onValueChange={onChange}>
-          <SelectTrigger className="glass">
+          <SelectTrigger className="glass w-full min-w-0">
             <SelectValue placeholder="Select a customer" />
           </SelectTrigger>
           <SelectContent className="glass-strong max-h-80">

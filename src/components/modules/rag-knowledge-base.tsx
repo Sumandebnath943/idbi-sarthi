@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Markdown } from "@/components/ui/markdown";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -152,7 +153,7 @@ export function RagKnowledgeBase() {
                   <Zap className="h-2.5 w-2.5" />{data.retrieval}
                 </Badge>
               </div>
-              <div className="text-sm leading-relaxed whitespace-pre-wrap">{data.answer}</div>
+              <Markdown>{data.answer}</Markdown>
               {data.citations.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-border/40">
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">Sources cited</div>
